@@ -1,0 +1,6 @@
+
+{:host "memkits.org"
+ :uploads [{:from "dist/*"
+            :to "cdn/conf-dates/"}
+           {:from "dist/{index.html,manifest.json}"
+            :to "repo/Memkits/conf-dates/"}]}
