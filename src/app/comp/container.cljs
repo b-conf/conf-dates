@@ -95,7 +95,7 @@
          {:href (:url conf),
           :inner-text (:url conf),
           :target "_blank",
-          :style {:color (hsl 200 80 76)}}))
+          :style {:color (hsl 200 80 76), :font-size 12, :white-space :nowrap}}))
        (div
         {}
         (<> (or (:name conf) "??"))
@@ -136,7 +136,7 @@
      (div
       {:style {:padding "100px 16px 240px"}}
       (list->
-       {:style {:width 720, :margin :auto}}
+       {:style {:max-width 720, :margin :auto}}
        (arrange-list
         (->> (concat
               [{:date (-> DateTime (.local) (.toFormat "yyyy-MM-dd")),
