@@ -120,7 +120,6 @@
  ()
  (action el *local at?)
  (when (= action :mount)
-   (js/console.log (js/document.querySelector "#today"))
    (delay!
     0.3
     (fn [] (js/document.body.scrollTo 0 (.-offsetTop (js/document.querySelector "#today")))))))
@@ -133,12 +132,30 @@
        schedule (read-string (inline "schedule.edn"))]
    [(effect-scroll)
     (div
-     {:style (merge ui/global {:padding "100px 16px 240px"})}
-     (list->
-      {:style {:width 720, :margin :auto}}
-      (arrange-list
-       (->> (concat
-             [{:date (-> DateTime (.local) (.toFormat "yyyy-MM-dd")), :today? true, :days 1}]
-             schedule)
-            (sort-by :date))))
+     {:style (merge ui/global)}
+     (div
+      {:style {:padding "100px 16px 240px"}}
+      (list->
+       {:style {:width 720, :margin :auto}}
+       (arrange-list
+        (->> (concat
+              [{:date (-> DateTime (.local) (.toFormat "yyyy-MM-dd")),
+                :today? true,
+                :days 1}]
+              schedule)
+             (sort-by :date)))))
+     (div
+      {:style (merge ui/row-parted {:padding "0 8px"})}
+      (span nil)
+      (div
+       {}
+       (a
+        {:href "https://github.com/hax/chinese-tech-conf-schedule/tree/master",
+         :inner-text "Data source.",
+         :target "_blank"})
+       (=< 8 nil)
+       (a
+        {:href "https://github.com/Memkits/conf-dates",
+         :inner-text "Fork on GitHub.",
+         :target "_blank"})))
      (when dev? (cursor-> :reel comp-reel states reel {})))]))
