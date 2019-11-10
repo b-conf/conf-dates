@@ -23,16 +23,16 @@
 (defn persist-storage! []
   (.setItem js/localStorage (:storage-key config/site) (pr-str (:store @*reel))))
 
-(defn render-app! [renderer]
-  (renderer mount-target (comp-container @*reel) #(dispatch! %1 %2)))
+(defn render-app! [renderer static?]
+  (renderer mount-target (comp-container @*reel static?) #(dispatch! %1 %2)))
 
 (def ssr? (some? (js/document.querySelector "meta.respo-ssr")))
 
 (defn main! []
   (println "Running mode:" (if config/dev? "dev" "release"))
-  (if ssr? (render-app! realize-ssr!))
-  (render-app! render!)
-  (add-watch *reel :changes (fn [] (render-app! render!)))
+  (if ssr? (render-app! realize-ssr! true))
+  (render-app! render! false)
+  (add-watch *reel :changes (fn [] (render-app! render! false)))
   (listen-devtools! "a" dispatch!)
   (.addEventListener js/window "beforeunload" persist-storage!)
   (repeat! 60 persist-storage!)

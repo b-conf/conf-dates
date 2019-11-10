@@ -117,20 +117,20 @@
 
 (defeffect
  effect-scroll
- ()
+ (static?)
  (action el *local at?)
- (when (= action :mount)
+ (when (and (= action :update) (not static?))
    (delay!
     0.3
     (fn [] (js/document.body.scrollTo 0 (.-offsetTop (js/document.querySelector "#today")))))))
 
 (defcomp
  comp-container
- (reel)
+ (reel static?)
  (let [store (:store reel)
        states (:states store)
        schedule (read-string (inline "schedule.edn"))]
-   [(effect-scroll)
+   [(effect-scroll static?)
     (div
      {:style (merge ui/global)}
      (div
@@ -139,9 +139,11 @@
        {:style {:max-width 720, :margin :auto}}
        (arrange-list
         (->> (concat
-              [{:date (-> DateTime (.local) (.toFormat "yyyy-MM-dd")),
-                :today? true,
-                :days 1}]
+              (if static?
+                []
+                [{:date (-> DateTime (.local) (.toFormat "yyyy-MM-dd")),
+                  :today? true,
+                  :days 1}])
               schedule)
              (sort-by :date)))))
      (div
