@@ -92,11 +92,32 @@
   :code :ChengduWebConf2019}
  {:city "Beijing",
   :host "GDG_Beijing",
-  :date "2019-12-0?",
+  :date "2019-12-08",
   :name "GDG DevFest 2019 Beijing",
   :url "https://www.meetup.com/GDG-Beijing/events/265252940/",
   :days 1,
   :code :GDG_DevFest2019Beijing}
+ {:city "Beijing",
+  :host "geekbang",
+  :date "2019-12-06",
+  :name "ArchSummit 全球架构师峰会",
+  :url "https://archsummit.infoq.cn/2019/beijing/",
+  :days 2,
+  :code :GDG_DevFest2019Beijing}
+ {:city "Hangzhou",
+  :host "antfin",
+  :date "2020-01-04",
+  :name "第三届 SEE Conf 蚂蚁金服体验科技大会",
+  :url "https://seeconf.antfin.com",
+  :days 1,
+  :code :SEEConf3rd}
+ {:city "Beijing",
+  :host "geekbang",
+  :date "2020-04-09",
+  :name "QCon 全球软件开发大会 2020 北京站",
+  :url "https://qcon.infoq.cn/2020/beijing/",
+  :days 3,
+  :code :SEEConf3rd}
  {:date "2020-02-03",
   :city "Paris, France",
   :url "https://2020.dotswift.io",
