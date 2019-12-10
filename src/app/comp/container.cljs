@@ -86,7 +86,11 @@
        (div
         {}
         (<>
-         (str (:date conf) (if (> (:days conf) 1) (str " (" (:days conf) "d)")))
+         (str
+          (:date conf)
+          (let [date (.fromISO DateTime (:date conf))]
+            (if (.-isValid date) (str " " (.toFormat date "ccc")) ""))
+          (if (> (:days conf) 1) (str " (" (:days conf) "d)")))
          {:font-size 20, :font-family ui/font-fancy, :font-weight 300})
         (=< 16 nil)
         (<> (:city conf))
