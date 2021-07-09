@@ -228,9 +228,9 @@
             render-app!
             add-watch *reel :changes $ fn (reel prev) (render-app!)
             listen-devtools! |k dispatch!
-            .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
-            repeat! 60 persist-storage!
-            let
+            ; .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
+            ; repeat! 60 persist-storage!
+            ; let
                 raw $ .!getItem js/localStorage (:storage-key config/site)
               when (some? raw)
                 dispatch! :hydrate-storage $ parse-cirru-edn raw
