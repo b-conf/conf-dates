@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@calcit/procs": "^0.4.8",
-    "luxon": "^1.28.0"
+    "luxon": "^2.0.1"
   },
   "devDependencies": {
     "vite": "^2.4.1"
