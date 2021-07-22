@@ -20,8 +20,8 @@
             let
                 store $ :store reel
                 states $ :states store
-                schedule $ parse-cirru-edn (inline "\"data/schedule.cirru")
-              [] (effect-scroll)
+                schedule $ :confs store
+              [] (effect-scroll schedule)
                 div
                   {} $ :style (merge ui/global)
                   div
@@ -182,9 +182,9 @@
         |inline $ quote
           defmacro inline (path) (read-file path)
         |effect-scroll $ quote
-          defeffect effect-scroll () (action el at?)
+          defeffect effect-scroll (schedule) (action el at?)
             when
-              and $ = action :mount
+              and $ or (= action :mount) (= action :update)
               js/setTimeout
                 fn () $ js/document.body.scrollTo 0
                   w-log $ .-offsetTop (js/document.querySelector "\"#today")
@@ -196,6 +196,7 @@
           def store $ {}
             :states $ {}
               :cursor $ []
+            :confs nil
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
@@ -205,6 +206,7 @@
           defn updater (store op data op-id op-time)
             case op
               :states $ update-states store data
+              :load-confs $ assoc store :confs data
               :hydrate-storage data
               op store
     |app.main $ {}
@@ -229,11 +231,24 @@
           defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
         |main! $ quote
           defn main! ()
+            if config/dev? $ load-console-formatter!
             println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
             render-app!
             add-watch *reel :changes $ fn (reel prev) (render-app!)
             listen-devtools! |k dispatch!
+            load-json-data!
             println "|App started."
+        |load-json-data! $ quote
+          defn load-json-data! () $ -> (js/fetch "\"http://r.tiye.me/b-conf/chinese-tech-conf-schedule/2021.json")
+            .then $ fn (res) (.!json res)
+            .then $ fn (json)
+              -> (to-calcit-data json)
+                map $ fn (obj)
+                  -> obj $ map-kv
+                    fn (k v)
+                      [] (turn-keyword k) v
+            .then $ fn (ret) (dispatch! :load-confs ret)
+            .catch $ fn (error) (js/console.error error)
         |dispatch! $ quote
           defn dispatch! (op op-data)
             when
@@ -246,6 +261,7 @@
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               reset! *reel $ refresh-reel @*reel schema/store updater
               tip! "\"ok~" "\"Ok"
+              load-json-data!
     |app.config $ {}
       :ns $ quote (ns app.config)
       :defs $ {}
