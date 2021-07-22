@@ -200,13 +200,13 @@
                                                                   |j $ {} (:text |DateTime) (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
                                                                   |r $ {}
                                                                     :data $ {}
-                                                                      |T $ {} (:text |.local) (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
+                                                                      |T $ {} (:text |.!local) (:type :leaf) (:at 1626975363447) (:by |rJG4IHzWf)
                                                                     :type :expr
                                                                     :at 1625857343469
                                                                     :by |rJG4IHzWf
                                                                   |v $ {}
                                                                     :data $ {}
-                                                                      |T $ {} (:text |.toFormat) (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
+                                                                      |T $ {} (:text |.!toFormat) (:type :leaf) (:at 1626975365099) (:by |rJG4IHzWf)
                                                                       |j $ {} (:text "|\"yyyy-MM-dd") (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
                                                                     :type :expr
                                                                     :at 1625857343469
@@ -321,7 +321,7 @@
                                               |j $ {}
                                                 :data $ {}
                                                   |T $ {} (:text |:href) (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
-                                                  |j $ {} (:text "|\"https://github.com/hax/chinese-tech-conf-schedule/tree/master") (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
+                                                  |j $ {} (:text "|\"https://github.com/b-conf/chinese-tech-conf-schedule") (:type :leaf) (:at 1626975383168) (:by |rJG4IHzWf)
                                                 :type :expr
                                                 :at 1625857343469
                                                 :by |rJG4IHzWf
@@ -362,7 +362,7 @@
                                               |j $ {}
                                                 :data $ {}
                                                   |T $ {} (:text |:href) (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
-                                                  |j $ {} (:text "|\"https://github.com/Memkits/conf-dates") (:type :leaf) (:at 1625857343469) (:by |rJG4IHzWf)
+                                                  |j $ {} (:text "|\"https://github.com/b-conf/conf-dates") (:type :leaf) (:at 1626975389017) (:by |rJG4IHzWf)
                                                 :type :expr
                                                 :at 1625857343469
                                                 :by |rJG4IHzWf

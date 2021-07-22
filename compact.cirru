@@ -35,7 +35,7 @@
                           ->
                             concat
                               [] $ {}
-                                :date $ -> DateTime (.local) (.toFormat "\"yyyy-MM-dd")
+                                :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
                                 :today? true
                                 :days 1
                               , schedule
@@ -46,9 +46,9 @@
                         merge ui/row-parted $ {} (:padding "\"0 8px")
                       span nil
                       div ({})
-                        a $ {} (:href "\"https://github.com/hax/chinese-tech-conf-schedule/tree/master") (:inner-text "\"Data source.") (:target "\"_blank")
+                        a $ {} (:href "\"https://github.com/b-conf/chinese-tech-conf-schedule") (:inner-text "\"Data source.") (:target "\"_blank")
                         =< 8 nil
-                        a $ {} (:href "\"https://github.com/Memkits/conf-dates") (:inner-text "\"Fork on GitHub.") (:target "\"_blank")
+                        a $ {} (:href "\"https://github.com/b-conf/conf-dates") (:inner-text "\"Fork on GitHub.") (:target "\"_blank")
                     when dev? $ comp-reel (>> states :reel) reel ({})
                   div
                     {} $ :style
