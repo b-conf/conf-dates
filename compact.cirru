@@ -49,17 +49,6 @@
                       =< 8 nil
                       a $ {} (:href "\"https://github.com/Memkits/conf-dates") (:inner-text "\"Fork on GitHub.") (:target "\"_blank")
                   when dev? $ comp-reel (>> states :reel) reel ({})
-        |arrange-list $ quote
-          defn arrange-list (acc confs previous-conf)
-            if (empty? confs)
-              map-indexed acc $ fn (idx x) ([] idx x)
-              let
-                  conf $ first confs
-                recur
-                  conj acc $ comp-conf conf previous-conf
-                    first $ rest confs
-                  rest confs
-                  if (:far? conf) previous-conf conf
         |comp-conf $ quote
           defcomp comp-conf (conf prev-conf next-conf)
             let
@@ -179,6 +168,19 @@
                       <> $ :host conf
                       =< 16 nil
                       ; <> $ name (:code conf)
+        |arrange-list $ quote
+          defn arrange-list (acc confs previous-conf)
+            if (empty? confs)
+              map-indexed acc $ fn (idx x) ([] idx x)
+              let
+                  conf $ first confs
+                recur
+                  conj acc $ comp-conf conf previous-conf
+                    first $ rest confs
+                  rest confs
+                  if (:far? conf) previous-conf conf
+        |inline $ quote
+          defmacro inline (path) (read-file path)
         |effect-scroll $ quote
           defeffect effect-scroll () (action el at?)
             when
@@ -187,68 +189,6 @@
                 fn () $ js/document.body.scrollTo 0
                   w-log $ .-offsetTop (js/document.querySelector "\"#today")
                 , 300
-        |inline $ quote
-          defmacro inline (path) (read-file path)
-      :proc $ quote ()
-    |app.config $ {}
-      :ns $ quote (ns app.config)
-      :defs $ {}
-        |dev? $ quote
-          def dev? $ = "\"dev" (get-env "\"mode")
-        |site $ quote
-          def site $ {} (:storage-key "\"workflow")
-      :proc $ quote ()
-    |app.main $ {}
-      :ns $ quote
-        ns app.main $ :require
-          respo.core :refer $ render! clear-cache!
-          app.comp.container :refer $ comp-container
-          app.updater :refer $ updater
-          app.schema :as schema
-          reel.util :refer $ listen-devtools!
-          reel.core :refer $ reel-updater refresh-reel
-          reel.schema :as reel-schema
-          app.config :as config
-      :defs $ {}
-        |repeat! $ quote
-          defn repeat! (duration cb)
-            js/setTimeout
-              fn () (cb)
-                repeat! (* 1000 duration) cb
-              * 1000 duration
-        |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when
-              and config/dev? $ not= op :states
-              println "\"Dispatch:" op
-            reset! *reel $ reel-updater updater @*reel op op-data
-        |main! $ quote
-          defn main! ()
-            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
-            render-app!
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
-            listen-devtools! |k dispatch!
-            ; .!addEventListener js/window |beforeunload $ fn (event) (persist-storage!)
-            ; repeat! 60 persist-storage!
-            ; let
-                raw $ .!getItem js/localStorage (:storage-key config/site)
-              when (some? raw)
-                dispatch! :hydrate-storage $ parse-cirru-edn raw
-            println "|App started."
-        |persist-storage! $ quote
-          defn persist-storage! () $ .!setItem js/localStorage (:storage-key config/site)
-            format-cirru-edn $ :store @*reel
-        |*reel $ quote
-          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
-        |render-app! $ quote
-          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |reload! $ quote
-          defn reload! () (remove-watch *reel :changes) (clear-cache!)
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
-            reset! *reel $ refresh-reel @*reel schema/store updater
-        |mount-target $ quote
-          def mount-target $ .!querySelector js/document |.app
-      :proc $ quote ()
     |app.schema $ {}
       :ns $ quote (ns app.schema)
       :defs $ {}
@@ -256,7 +196,6 @@
           def store $ {}
             :states $ {}
               :cursor $ []
-      :proc $ quote ()
     |app.updater $ {}
       :ns $ quote
         ns app.updater $ :require
@@ -268,4 +207,49 @@
               :states $ update-states store data
               :hydrate-storage data
               op store
-      :proc $ quote ()
+    |app.main $ {}
+      :ns $ quote
+        ns app.main $ :require
+          respo.core :refer $ render! clear-cache!
+          app.comp.container :refer $ comp-container
+          app.updater :refer $ updater
+          app.schema :as schema
+          reel.util :refer $ listen-devtools!
+          reel.core :refer $ reel-updater refresh-reel
+          reel.schema :as reel-schema
+          app.config :as config
+          "\"bottom-tip" :default tip!
+          "\"./calcit.build-errors" :default build-errors
+      :defs $ {}
+        |render-app! $ quote
+          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
+        |mount-target $ quote
+          def mount-target $ .!querySelector js/document |.app
+        |*reel $ quote
+          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+        |main! $ quote
+          defn main! ()
+            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+            render-app!
+            add-watch *reel :changes $ fn (reel prev) (render-app!)
+            listen-devtools! |k dispatch!
+            println "|App started."
+        |dispatch! $ quote
+          defn dispatch! (op op-data)
+            when
+              and config/dev? $ not= op :states
+              println "\"Dispatch:" op
+            reset! *reel $ reel-updater updater @*reel op op-data
+        |reload! $ quote
+          defn reload! () $ if (some? build-errors) (tip! "\"error" build-errors)
+            do (remove-watch *reel :changes) (clear-cache!)
+              add-watch *reel :changes $ fn (reel prev) (render-app!)
+              reset! *reel $ refresh-reel @*reel schema/store updater
+              tip! "\"ok~" "\"Ok"
+    |app.config $ {}
+      :ns $ quote (ns app.config)
+      :defs $ {}
+        |dev? $ quote
+          def dev? $ = "\"dev" (get-env "\"mode")
+        |site $ quote
+          def site $ {} (:storage-key "\"workflow")
