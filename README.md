@@ -5,7 +5,7 @@ Conf Dates
 > exploring a virual way displaying conf dates.
 > Data from [chinese-tech-conf-schedule](https://github.com/hax/chinese-tech-conf-schedule/tree/master).
 
-Site http://r.tiye.me/Memkits/conf-dates/
+Site http://r.tiye.me/b-conf/conf-dates/
 
 ### Dev
 
