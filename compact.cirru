@@ -244,16 +244,16 @@
             load-json-data!
             println "|App started."
         |load-json-data! $ quote
-          defn load-json-data! () $ -> (js/fetch schedule-url)
-            .then $ fn (res) (.!json res)
-            .then $ fn (json)
-              -> (to-calcit-data json)
-                map $ fn (obj)
-                  -> obj $ map-kv
-                    fn (k v)
-                      [] (turn-keyword k) v
-            .then $ fn (ret) (dispatch! :load-confs ret)
-            .catch $ fn (error) (js/console.error error)
+          defn load-json-data! () (hint-fn async)
+            let
+                resource $ js-await (js/fetch schedule-url)
+                json-data $ js-await (.!json resource)
+                data $ -> json-data to-calcit-data
+                  map $ fn (obj)
+                    -> obj $ map-kv
+                      fn (k v)
+                        [] (turn-keyword k) v
+              dispatch! :load-confs data
         |dispatch! $ quote
           defn dispatch! (op op-data)
             when
