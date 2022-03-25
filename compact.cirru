@@ -3,6 +3,7 @@
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
     :version |0.0.1
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -60,7 +61,7 @@
           defcomp comp-conf (conf prev-conf next-conf)
             let
                 date $ -> DateTime
-                  .fromISO $ :date conf
+                  .!fromISO $ :date conf
                   .startOf "\"day"
                 prev-date $ -> DateTime
                   .!fromISO $ :date prev-conf
@@ -229,7 +230,7 @@
       :defs $ {}
         |render-app! $ quote
           defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2021.json")
+        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json")
         |mount-target $ quote
           def mount-target $ .!querySelector js/document |.app
         |*reel $ quote

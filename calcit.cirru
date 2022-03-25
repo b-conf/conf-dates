@@ -1,9 +1,8 @@
 
 {}
-  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:compact-output? true) (:storage-key |calcit.cirru) (:version |0.0.1)
-    :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
-    :init-fn |app.main/main!
-    :extension |.cljs
+  :users $ {}
+    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+    |rJG4IHzWf $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |rJG4IHzWf) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
   :ir $ {} (:package |app)
     :files $ {}
       |app.comp.container $ {}
@@ -542,7 +541,7 @@
                               |j $ {} (:text |DateTime) (:type :leaf) (:at 1625857372402) (:by |rJG4IHzWf)
                               |r $ {}
                                 :data $ {}
-                                  |T $ {} (:text |.fromISO) (:type :leaf) (:at 1625857372402) (:by |rJG4IHzWf)
+                                  |T $ {} (:text |.!fromISO) (:type :leaf) (:at 1648184708241) (:by |rJG4IHzWf)
                                   |j $ {}
                                     :data $ {}
                                       |T $ {} (:text |:date) (:type :leaf) (:at 1625857372402) (:by |rJG4IHzWf)
@@ -2402,7 +2401,7 @@
             :data $ {}
               |T $ {} (:text |def) (:type :leaf) (:at 1626974319605) (:by |rJG4IHzWf)
               |j $ {} (:text |schedule-url) (:type :leaf) (:at 1626974319605) (:by |rJG4IHzWf)
-              |r $ {} (:text "|\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2021.json") (:type :leaf) (:at 1626974320830) (:by |rJG4IHzWf)
+              |r $ {} (:text "|\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json") (:type :leaf) (:at 1648184899341) (:by |rJG4IHzWf)
             :type :expr
             :at 1626974319605
             :by |rJG4IHzWf
@@ -2996,6 +2995,8 @@
           :type :expr
           :at 1527788237503
           :by |root
-  :users $ {}
-    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
-    |rJG4IHzWf $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |rJG4IHzWf) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+  :configs $ {} (:reload-fn |app.main/reload!) (:port 6001) (:output |src) (:compact-output? true) (:storage-key |calcit.cirru) (:version |0.0.1)
+    :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
+    :init-fn |app.main/main!
+    :extension |.cljs
+  :entries $ {}
