@@ -5,6 +5,7 @@ body {
 
 html {
   scroll-behavior: smooth;
+  background-color: #eeeeee;
 }
 
 body * {
@@ -31,4 +32,12 @@ body * {
 
 ::-webkit-resizer {
   background-color:transparent;
+}
+
+.minor-tip {
+  opacity: 0.5;
+  transition-duration: 200ms;
+}
+.minor-tip:hover {
+  opacity: 1;
 }
