@@ -3,6 +3,7 @@
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
     :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
     :version |0.0.1
+  :entries $ {}
   :files $ {}
     |app.comp.container $ {}
       :ns $ quote
@@ -25,42 +26,64 @@
                 if (some? schedule)
                   div
                     {} $ :style (merge ui/global)
-                    div
-                      {} $ :style
-                        {} $ :padding "\"100px 16px 240px"
-                      list->
+                    , comp-header
+                      div
                         {} $ :style
-                          {} (:max-width 720) (:margin :auto)
-                        arrange-list ([])
-                          ->
-                            concat
-                              [] $ {}
-                                :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
-                                :today? true
-                                :days 1
-                              , schedule
-                            .sort-by :date
-                          , nil
-                    div
-                      {} $ :style
-                        merge ui/row-parted $ {} (:padding "\"0 8px")
-                      span nil
-                      div ({})
-                        a $ {} (:href "\"https://github.com/b-conf/chinese-tech-conf-schedule") (:inner-text "\"Data source.") (:target "\"_blank")
-                        =< 8 nil
-                        a $ {} (:href "\"https://github.com/b-conf/conf-dates") (:inner-text "\"Fork on GitHub.") (:target "\"_blank")
-                    when dev? $ comp-reel (>> states :reel) reel ({})
+                          {} $ :padding "\"100px 16px 240px"
+                        list->
+                          {} $ :style
+                            {} (:max-width 720) (:margin :auto)
+                          arrange-list ([])
+                            ->
+                              concat
+                                [] $ {}
+                                  :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
+                                  :today? true
+                                  :days 1
+                                , schedule
+                              .sort-by :date
+                            , nil
+                      when dev? $ comp-reel (>> states :reel) reel ({})
                   div
                     {} $ :style
                       merge ui/center $ {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
                         :color $ hsl 0 0 80
                         :font-size 80
                     <> "\"Loading..."
-        |comp-conf $ quote
-          defcomp comp-conf (conf prev-conf next-conf)
+        |arrange-list $ quote
+          defn arrange-list (acc confs previous-conf)
+            if (empty? confs)
+              map-indexed acc $ fn (idx x) ([] idx x)
+              let
+                  conf $ first confs
+                recur
+                  conj acc $ comp-card conf previous-conf
+                    first $ rest confs
+                  rest confs
+                  if (:far? conf) previous-conf conf
+        |inline $ quote
+          defmacro inline (path) (read-file path)
+        |effect-scroll $ quote
+          defeffect effect-scroll (schedule) (action el at?)
+            when (some? schedule)
+              js/setTimeout
+                fn () $ js/document.body.scrollTo 0
+                  w-log $ .-offsetTop (js/document.querySelector "\"#today")
+                , 300
+        |comp-today $ quote
+          def comp-today $ div
+            {} (:id "\"today")
+              :style $ merge ui/center
+                {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius "\"24px")
+                  :color $ hsl 0 0 100
+                  :box-shadow $ str "\"0 0 4px " (hsl 240 80 50 0.2)
+                  :background-color $ hsl 220 90 76
+            <> "\"Today"
+        |comp-card $ quote
+          defcomp comp-card (conf prev-conf next-conf)
             let
                 date $ -> DateTime
-                  .fromISO $ :date conf
+                  .!fromISO $ :date conf
                   .startOf "\"day"
                 prev-date $ -> DateTime
                   .!fromISO $ :date prev-conf
@@ -96,7 +119,8 @@
                 {} $ :style ui/column
                 if overlap-with-prev?
                   div $ {}
-                    :style $ {} (:background-color :red)
+                    :style $ {}
+                      :background-color $ hsl 0 80 70
                       :color $ hsl 0 0 100 0.7
                       :padding "\"0 16px"
                       :border-top $ str "\"2px dashed " (hsl 0 0 100)
@@ -112,87 +136,72 @@
                       if (> days 0)
                         div
                           {} $ :style
-                            merge ui/center $ {}
+                            merge ui/row-middle $ {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "\"0 8px") (:margin "\"8px 20px")
+                              :border-left $ str "\"4px solid " (hsl 240 80 86)
                               :height $ str
-                                + 10 $ * 28 (js/Math.log days)
+                                + 4 $ * 18 (sqrt days)
                                 , "\"px"
-                              :font-family ui/font-fancy
-                              :font-size 16
-                              :font-weight 300
                           <> $ str days "\" days"
-                if (:today? conf)
-                  div
-                    {} (:id "\"today")
-                      :style $ merge ui/center
-                        {}
-                          :background-color $ hsl 220 90 76
-                          :height 120
-                          :color $ hsl 0 0 100
-                          :font-size 20
-                          :font-family ui/font-fancy
-                          :font-weight 300
-                    <> "\"Today"
-                  div
-                    {} $ :style
-                      merge ui/column
-                        {} (:padding "\"12px 16px")
-                          :background-color $ hsl 0 0 96
-                        if (or overlap-with-prev? overlap-with-next?)
-                          {}
-                            :background-color $ hsl 33 50 40
-                            :color :white
-                          {} $ :border
-                            str "\"1px solid " $ hsl 0 0 93
-                        if (:far? conf)
-                          {} $ :opacity 0.5
-                    div ({})
-                      <>
-                        str
-                          let
-                              date $ ->
-                                .!fromISO DateTime $ :date conf
-                            if (.-isValid date) (.!toFormat date "\"yyyy-MM-dd ccc") "\""
-                          if
-                            > (:days conf) 1
-                            str "\" (" (:days conf) "\"d)"
-                        {} (:font-size 20) (:font-family ui/font-fancy) (:font-weight 300)
-                      =< 16 nil
-                      <> $ :city conf
-                      =< 16 nil
-                      a $ {}
-                        :href $ :url conf
-                        :inner-text $ :url conf
-                        :target "\"_blank"
-                        :style $ {}
-                          :color $ hsl 200 80 76
-                          :font-size 12
-                          :white-space :nowrap
-                    div ({})
-                      <> $ or (:name conf) "\"??"
-                      =< 16 nil
-                      <> $ :host conf
-                      =< 16 nil
-                      ; <> $ name (:code conf)
-        |arrange-list $ quote
-          defn arrange-list (acc confs previous-conf)
-            if (empty? confs)
-              map-indexed acc $ fn (idx x) ([] idx x)
-              let
-                  conf $ first confs
-                recur
-                  conj acc $ comp-conf conf previous-conf
-                    first $ rest confs
-                  rest confs
-                  if (:far? conf) previous-conf conf
-        |inline $ quote
-          defmacro inline (path) (read-file path)
-        |effect-scroll $ quote
-          defeffect effect-scroll (schedule) (action el at?)
-            when (some? schedule)
-              js/setTimeout
-                fn () $ js/document.body.scrollTo 0
-                  w-log $ .-offsetTop (js/document.querySelector "\"#today")
-                , 300
+                if (:today? conf) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
+        |comp-conf-info $ quote
+          defn comp-conf-info (conf overlapped?)
+            div
+              {} $ :style
+                merge ui/column
+                  {} (:padding "\"12px 16px") (:border-radius "\"8px")
+                    :background-color $ hsl 0 0 100
+                  if overlapped?
+                    {} $ :background-color (hsl 33 50 80)
+                    {}
+                      :border $ str "\"1px solid " (hsl 0 0 90)
+                      :box-shadow $ str-spaced "\"0 0 4px" (hsl 0 0 60 0.1)
+                  if (:far? conf)
+                    {} $ :opacity 0.5
+              div ({})
+                <>
+                  or (:name conf) "\"??"
+                  {} $ :font-size 16
+                =< 16 nil
+                ; <> $ name (:code conf)
+              div ({})
+                <>
+                  str
+                    let
+                        date $ ->
+                          .!fromISO DateTime $ :date conf
+                      if (.-isValid date) (.!toFormat date "\"yyyy-MM-dd ccc") "\""
+                    , "\" " $ if
+                      > (:days conf) 1
+                      str "\"(" (:days conf) "\"d)"
+                      , "\"_"
+                  {} (:font-size 16) (:font-family ui/font-normal) (:font-weight 300)
+                =< 16 nil
+                <> $ :host conf
+                =< 8 nil
+                <> $ :city conf
+                =< 16 nil
+                a $ {}
+                  :href $ :url conf
+                  :inner-text $ :url conf
+                  :target "\"_blank"
+                  :style $ {}
+                    :color $ hsl 200 80 76
+                    :font-size 12
+                    :white-space :nowrap
+        |comp-header $ quote
+          def comp-header $ div
+            {} $ :style
+              merge ui/row-parted $ {} (:padding "\"12px 12px")
+            div
+              {} $ :style
+                merge $ {} (:font-size 20)
+              <> "\"中文技术活动日程"
+            div ({})
+              a $ {} (:href "\"https://github.com/b-conf/chinese-tech-conf-schedule") (:inner-text "\"Data source") (:target "\"_blank") (:class-name "\"minor-tip")
+                :style $ {} (:font-family ui/font-fancy)
+              =< 8 nil
+              a $ {} (:href "\"https://github.com/b-conf/conf-dates") (:inner-text "\"Fork") (:target "\"_blank") (:class-name "\"minor-tip")
+                :style $ {} (:font-family ui/font-fancy)
     |app.schema $ {}
       :ns $ quote (ns app.schema)
       :defs $ {}
@@ -229,7 +238,7 @@
       :defs $ {}
         |render-app! $ quote
           defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2021.json")
+        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json")
         |mount-target $ quote
           def mount-target $ .!querySelector js/document |.app
         |*reel $ quote
