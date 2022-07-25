@@ -1,55 +1,11 @@
 
 {} (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
+  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
-    :version |0.0.1
   :entries $ {}
   :files $ {}
     |app.comp.container $ {}
-      :ns $ quote
-        ns app.comp.container $ :require (respo-ui.core :as ui)
-          respo.util.format :refer $ hsl
-          respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
-          respo.comp.space :refer $ =<
-          reel.comp.reel :refer $ comp-reel
-          respo-md.comp.md :refer $ comp-md
-          app.config :refer $ dev?
-          "\"luxon" :refer $ DateTime
       :defs $ {}
-        |comp-container $ quote
-          defcomp comp-container (reel)
-            let
-                store $ :store reel
-                states $ :states store
-                schedule $ :confs store
-              [] (effect-scroll schedule)
-                if (some? schedule)
-                  div
-                    {} $ :style (merge ui/global)
-                    , comp-header
-                      div
-                        {} $ :style
-                          {} $ :padding "\"100px 16px 240px"
-                        list->
-                          {} $ :style
-                            {} (:max-width 720) (:margin :auto)
-                          arrange-list ([])
-                            ->
-                              concat
-                                [] $ {}
-                                  :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
-                                  :today? true
-                                  :days 1
-                                , schedule
-                              .sort-by :date
-                            , nil
-                      when dev? $ comp-reel (>> states :reel) reel ({})
-                  div
-                    {} $ :style
-                      merge ui/center $ {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
-                        :color $ hsl 0 0 80
-                        :font-size 80
-                    <> "\"Loading..."
         |arrange-list $ quote
           defn arrange-list (acc confs previous-conf)
             if (empty? confs)
@@ -61,24 +17,6 @@
                     first $ rest confs
                   rest confs
                   if (:far? conf) previous-conf conf
-        |inline $ quote
-          defmacro inline (path) (read-file path)
-        |effect-scroll $ quote
-          defeffect effect-scroll (schedule) (action el at?)
-            when (some? schedule)
-              js/setTimeout
-                fn () $ js/document.body.scrollTo 0
-                  w-log $ .-offsetTop (js/document.querySelector "\"#today")
-                , 300
-        |comp-today $ quote
-          def comp-today $ div
-            {} (:id "\"today")
-              :style $ merge ui/center
-                {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius "\"24px")
-                  :color $ hsl 0 0 100
-                  :box-shadow $ str "\"0 0 4px " (hsl 240 80 50 0.2)
-                  :background-color $ hsl 220 90 76
-            <> "\"Today"
         |comp-card $ quote
           defcomp comp-card (conf prev-conf next-conf)
             let
@@ -188,6 +126,40 @@
                     :color $ hsl 200 80 76
                     :font-size 12
                     :white-space :nowrap
+        |comp-container $ quote
+          defcomp comp-container (reel)
+            let
+                store $ :store reel
+                states $ :states store
+                schedule $ :confs store
+              [] (effect-scroll schedule)
+                if (some? schedule)
+                  div
+                    {} $ :style (merge ui/global)
+                    , comp-header
+                      div
+                        {} $ :style
+                          {} $ :padding "\"100px 16px 240px"
+                        list->
+                          {} $ :style
+                            {} (:max-width 720) (:margin :auto)
+                          arrange-list ([])
+                            ->
+                              concat
+                                [] $ {}
+                                  :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
+                                  :today? true
+                                  :days 1
+                                , schedule
+                              .sort-by :date
+                            , nil
+                      when dev? $ comp-reel (>> states :reel) reel ({})
+                  div
+                    {} $ :style
+                      merge ui/center $ {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
+                        :color $ hsl 0 0 80
+                        :font-size 80
+                    <> "\"Loading..."
         |comp-header $ quote
           def comp-header $ div
             {} $ :style
@@ -202,27 +174,82 @@
               =< 8 nil
               a $ {} (:href "\"https://github.com/b-conf/conf-dates") (:inner-text "\"Fork") (:target "\"_blank") (:class-name "\"minor-tip")
                 :style $ {} (:font-family ui/font-fancy)
-    |app.schema $ {}
-      :ns $ quote (ns app.schema)
-      :defs $ {}
-        |store $ quote
-          def store $ {}
-            :states $ {}
-              :cursor $ []
-            :confs nil
-    |app.updater $ {}
+        |comp-today $ quote
+          def comp-today $ div
+            {} (:id "\"today")
+              :style $ merge ui/center
+                {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius "\"24px")
+                  :color $ hsl 0 0 100
+                  :box-shadow $ str "\"0 0 4px " (hsl 240 80 50 0.2)
+                  :background-color $ hsl 220 90 76
+            <> "\"Today"
+        |effect-scroll $ quote
+          defeffect effect-scroll (schedule) (action el at?)
+            when (some? schedule)
+              js/setTimeout
+                fn () $ js/document.body.scrollTo 0
+                  wo-log $ .-offsetTop (js/document.querySelector "\"#today")
+                , 300
+        |inline $ quote
+          defmacro inline (path) (read-file path)
       :ns $ quote
-        ns app.updater $ :require
-          respo.cursor :refer $ update-states
+        ns app.comp.container $ :require (respo-ui.core :as ui)
+          respo.util.format :refer $ hsl
+          respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
+          respo.comp.space :refer $ =<
+          reel.comp.reel :refer $ comp-reel
+          respo-md.comp.md :refer $ comp-md
+          app.config :refer $ dev?
+          "\"luxon" :refer $ DateTime
+    |app.config $ {}
       :defs $ {}
-        |updater $ quote
-          defn updater (store op data op-id op-time)
-            case op
-              :states $ update-states store data
-              :load-confs $ assoc store :confs data
-              :hydrate-storage data
-              op store
+        |dev? $ quote
+          def dev? $ = "\"dev" (get-env "\"mode" "\"release")
+        |site $ quote
+          def site $ {} (:storage-key "\"workflow")
+      :ns $ quote (ns app.config)
     |app.main $ {}
+      :defs $ {}
+        |*reel $ quote
+          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+        |dispatch! $ quote
+          defn dispatch! (op op-data)
+            when
+              and config/dev? $ not= op :states
+              println "\"Dispatch:" op
+            reset! *reel $ reel-updater updater @*reel op op-data
+        |load-json-data! $ quote
+          defn load-json-data! () (hint-fn async)
+            let
+                resource $ js-await (js/fetch schedule-url)
+                json-data $ js-await (.!json resource)
+                data $ -> json-data to-calcit-data
+                  map $ fn (obj)
+                    -> obj $ map-kv
+                      fn (k v)
+                        [] (turn-keyword k) v
+              dispatch! :load-confs data
+        |main! $ quote
+          defn main! ()
+            if config/dev? $ load-console-formatter!
+            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+            render-app!
+            add-watch *reel :changes $ fn (reel prev) (render-app!)
+            listen-devtools! |k dispatch!
+            load-json-data!
+            println "|App started."
+        |mount-target $ quote
+          def mount-target $ .!querySelector js/document |.app
+        |reload! $ quote
+          defn reload! () $ if (some? build-errors) (tip! "\"error" build-errors)
+            do (remove-watch *reel :changes) (clear-cache!)
+              add-watch *reel :changes $ fn (reel prev) (render-app!)
+              reset! *reel $ refresh-reel @*reel schema/store updater
+              tip! "\"ok~" "\"Ok"
+              load-json-data!
+        |render-app! $ quote
+          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
+        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json")
       :ns $ quote
         ns app.main $ :require
           respo.core :refer $ render! clear-cache!
@@ -235,51 +262,23 @@
           app.config :as config
           "\"bottom-tip" :default tip!
           "\"./calcit.build-errors" :default build-errors
+    |app.schema $ {}
       :defs $ {}
-        |render-app! $ quote
-          defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json")
-        |mount-target $ quote
-          def mount-target $ .!querySelector js/document |.app
-        |*reel $ quote
-          defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
-        |main! $ quote
-          defn main! ()
-            if config/dev? $ load-console-formatter!
-            println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
-            render-app!
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
-            listen-devtools! |k dispatch!
-            load-json-data!
-            println "|App started."
-        |load-json-data! $ quote
-          defn load-json-data! () (hint-fn async)
-            let
-                resource $ js-await (js/fetch schedule-url)
-                json-data $ js-await (.!json resource)
-                data $ -> json-data to-calcit-data
-                  map $ fn (obj)
-                    -> obj $ map-kv
-                      fn (k v)
-                        [] (turn-keyword k) v
-              dispatch! :load-confs data
-        |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when
-              and config/dev? $ not= op :states
-              println "\"Dispatch:" op
-            reset! *reel $ reel-updater updater @*reel op op-data
-        |reload! $ quote
-          defn reload! () $ if (some? build-errors) (tip! "\"error" build-errors)
-            do (remove-watch *reel :changes) (clear-cache!)
-              add-watch *reel :changes $ fn (reel prev) (render-app!)
-              reset! *reel $ refresh-reel @*reel schema/store updater
-              tip! "\"ok~" "\"Ok"
-              load-json-data!
-    |app.config $ {}
-      :ns $ quote (ns app.config)
+        |store $ quote
+          def store $ {}
+            :states $ {}
+              :cursor $ []
+            :confs nil
+      :ns $ quote (ns app.schema)
+    |app.updater $ {}
       :defs $ {}
-        |dev? $ quote
-          def dev? $ = "\"dev" (get-env "\"mode")
-        |site $ quote
-          def site $ {} (:storage-key "\"workflow")
+        |updater $ quote
+          defn updater (store op data op-id op-time)
+            case op
+              :states $ update-states store data
+              :load-confs $ assoc store :confs data
+              :hydrate-storage data
+              op store
+      :ns $ quote
+        ns app.updater $ :require
+          respo.cursor :refer $ update-states
