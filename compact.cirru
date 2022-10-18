@@ -207,6 +207,8 @@
           def dev? $ = "\"dev" (get-env "\"mode" "\"release")
         |site $ quote
           def site $ {} (:storage-key "\"workflow")
+        |year $ quote
+          def year $ get-env "\"year" "\"2022"
       :ns $ quote (ns app.config)
     |app.main $ {}
       :defs $ {}
@@ -249,7 +251,8 @@
               load-json-data!
         |render-app! $ quote
           defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |schedule-url $ quote (def schedule-url "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json")
+        |schedule-url $ quote
+          def schedule-url $ str "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/" config/year "\".json"
       :ns $ quote
         ns app.main $ :require
           respo.core :refer $ render! clear-cache!
