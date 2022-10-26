@@ -1388,6 +1388,15 @@
                     :data $ {}
                       |T $ {} (:at 1544956719115) (:by |rJG4IHzWf) (:text |:storage-key) (:type :leaf)
                       |j $ {} (:at 1544956719115) (:by |rJG4IHzWf) (:text "|\"workflow") (:type :leaf)
+          |year $ {} (:at 1666110780702) (:by |rJG4IHzWf) (:type :expr)
+            :data $ {}
+              |T $ {} (:at 1666110780702) (:by |rJG4IHzWf) (:text |def) (:type :leaf)
+              |b $ {} (:at 1666110780702) (:by |rJG4IHzWf) (:text |year) (:type :leaf)
+              |h $ {} (:at 1666110780702) (:by |rJG4IHzWf) (:type :expr)
+                :data $ {}
+                  |T $ {} (:at 1666110785490) (:by |rJG4IHzWf) (:text |get-env) (:type :leaf)
+                  |b $ {} (:at 1666110787179) (:by |rJG4IHzWf) (:text "|\"year") (:type :leaf)
+                  |h $ {} (:at 1666110789141) (:by |rJG4IHzWf) (:text "|\"2022") (:type :leaf)
         :ns $ {} (:at 1527788237503) (:by |root) (:type :expr)
           :data $ {}
             |T $ {} (:at 1527788237503) (:by |root) (:text |ns) (:type :leaf)
@@ -1672,7 +1681,12 @@
             :data $ {}
               |T $ {} (:at 1626974319605) (:by |rJG4IHzWf) (:text |def) (:type :leaf)
               |j $ {} (:at 1626974319605) (:by |rJG4IHzWf) (:text |schedule-url) (:type :leaf)
-              |r $ {} (:at 1648193820810) (:by |rJG4IHzWf) (:text "|\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/2022.json") (:type :leaf)
+              |r $ {} (:at 1666110763817) (:by |rJG4IHzWf) (:type :expr)
+                :data $ {}
+                  |D $ {} (:at 1666110765160) (:by |rJG4IHzWf) (:text |str) (:type :leaf)
+                  |T $ {} (:at 1666110771107) (:by |rJG4IHzWf) (:text "|\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/") (:type :leaf)
+                  |X $ {} (:at 1666110779697) (:by |rJG4IHzWf) (:text |config/year) (:type :leaf)
+                  |b $ {} (:at 1666110769162) (:by |rJG4IHzWf) (:text "|\".json") (:type :leaf)
         :ns $ {} (:at 1499755354983) (:type :expr)
           :data $ {}
             |T $ {} (:at 1499755354983) (:by |root) (:text |ns) (:type :leaf)
