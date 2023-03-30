@@ -208,7 +208,7 @@
         |site $ quote
           def site $ {} (:storage-key "\"workflow")
         |year $ quote
-          def year $ get-env "\"year" "\"2022"
+          def year $ get-env "\"year" "\"2023"
       :ns $ quote (ns app.config)
     |app.main $ {}
       :defs $ {}
