@@ -229,7 +229,7 @@
                   map $ fn (obj)
                     -> obj $ map-kv
                       fn (k v)
-                        [] (turn-keyword k) v
+                        [] (turn-tag k) v
               dispatch! :load-confs data
         |main! $ quote
           defn main! ()
