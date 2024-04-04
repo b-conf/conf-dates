@@ -114,7 +114,7 @@
                                       |j $ %{} :Leaf (:at 1625857372402) (:by |rJG4IHzWf) (:text |conf)
                               |v $ %{} :Expr (:at 1625857372402) (:by |rJG4IHzWf)
                                 :data $ {}
-                                  |T $ %{} :Leaf (:at 1625857372402) (:by |rJG4IHzWf) (:text |.startOf)
+                                  |T $ %{} :Leaf (:at 1712207517101) (:by |rJG4IHzWf) (:text |.!startOf)
                                   |j $ %{} :Leaf (:at 1625857372402) (:by |rJG4IHzWf) (:text "|\"day")
                       |j $ %{} :Expr (:at 1625857372402) (:by |rJG4IHzWf)
                         :data $ {}

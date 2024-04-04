@@ -24,7 +24,7 @@
               let
                   date $ -> DateTime
                     .!fromISO $ :date conf
-                    .startOf "\"day"
+                    .!startOf "\"day"
                   prev-date $ -> DateTime
                     .!fromISO $ :date prev-conf
                     .!startOf "\"day"
