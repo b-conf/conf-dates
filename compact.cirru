@@ -1,12 +1,12 @@
 
-{} (:package |app)
+{} (:about "|file is generated - never edit directly; learn cr edit/tree workflows before changing") (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
   :entries $ {}
   :files $ {}
     |app.comp.container $ %{} :FileEntry
       :defs $ {}
-        |arrange-list $ %{} :CodeEntry (:doc |)
+        |arrange-list $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn arrange-list (acc confs previous-conf)
               if (empty? confs)
@@ -18,19 +18,20 @@
                       first $ rest confs
                     rest confs
                     if (:far? conf) previous-conf conf
-        |comp-card $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-card $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
               let
                   date $ -> DateTime
                     .!fromISO $ :date conf
-                    .!startOf "\"day"
+                    .!startOf |day
                   prev-date $ -> DateTime
                     .!fromISO $ :date prev-conf
-                    .!startOf "\"day"
+                    .!startOf |day
                   next-date $ -> DateTime
                     .!fromISO $ :date next-conf
-                    .!startOf "\"day"
+                    .!startOf |day
                   overlap-with-prev? $ if
                     or (nil? prev-conf) (:today? prev-conf) (:today? conf)
                     , false
@@ -62,8 +63,8 @@
                       :style $ {}
                         :background-color $ hsl 0 80 70
                         :color $ hsl 0 0 100 0.7
-                        :padding "\"0 16px"
-                        :border-top $ str "\"2px dashed " (hsl 0 0 100)
+                        :padding "|0 16px"
+                        :border-top $ str "|2px dashed " (hsl 0 0 100)
                         :text-align :center
                     if (nil? prev-conf)
                       div $ {}
@@ -72,35 +73,36 @@
                             .!plus $ js-object
                               :days $ dec
                                 js/Math.ceil $ :days prev-conf
-                          days $ .-days (.!diff date prev-end-date "\"days")
+                          days $ .-days (.!diff date prev-end-date |days)
                         if (> days 0)
                           div
                             {} $ :style
-                              merge ui/row-middle $ {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "\"0 8px") (:margin "\"8px 20px")
-                                :border-left $ str "\"4px solid " (hsl 240 80 86)
+                              merge ui/row-middle $ {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "|0 8px") (:margin "|8px 20px")
+                                :border-left $ str "|4px solid " (hsl 240 80 86)
                                 :height $ str
                                   + 4 $ * 18 (sqrt days)
-                                  , "\"px"
-                            <> $ str days "\" days"
+                                  , |px
+                            <> $ str days "| days"
                   if (:today? conf) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
-        |comp-conf-info $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-conf-info $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn comp-conf-info (conf overlapped?)
               div
                 {} $ :style
                   merge ui/column
-                    {} (:padding "\"12px 16px") (:border-radius "\"8px")
+                    {} (:padding "|12px 16px") (:border-radius |8px)
                       :background-color $ hsl 0 0 100
                     if overlapped?
                       {} $ :background-color (hsl 33 50 80)
                       {}
-                        :border $ str "\"1px solid " (hsl 0 0 90)
-                        :box-shadow $ str-spaced "\"0 0 4px" (hsl 0 0 60 0.1)
+                        :border $ str "|1px solid " (hsl 0 0 90)
+                        :box-shadow $ str-spaced "|0 0 4px" (hsl 0 0 60 0.1)
                     if (:far? conf)
                       {} $ :opacity 0.5
                 div ({})
                   <>
-                    or (:name conf) "\"??"
+                    or (:name conf) |??
                     {} $ :font-size 16
                   =< 16 nil
                   ; <> $ name (:code conf)
@@ -110,11 +112,11 @@
                       let
                           date $ ->
                             .!fromISO DateTime $ :date conf
-                        if (.-isValid date) (.!toFormat date "\"yyyy-MM-dd ccc") "\""
-                      , "\" " $ if
+                        if (.-isValid date) (.!toFormat date "|yyyy-MM-dd ccc") |
+                      , "| " $ if
                         > (:days conf) 1
-                        str "\"(" (:days conf) "\"d)"
-                        , "\"_"
+                        str "|(" (:days conf) "|d)"
+                        , |_
                     {} (:font-size 16) (:font-family ui/font-normal) (:font-weight 300)
                   =< 16 nil
                   <> $ :host conf
@@ -124,12 +126,13 @@
                   a $ {}
                     :href $ :url conf
                     :inner-text $ :url conf
-                    :target "\"_blank"
+                    :target |_blank
                     :style $ {}
                       :color $ hsl 200 80 76
                       :font-size 12
                       :white-space :nowrap
-        |comp-container $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-container $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -143,7 +146,7 @@
                       , comp-header
                         div
                           {} $ :style
-                            {} $ :padding "\"100px 16px 240px"
+                            {} $ :padding "|100px 16px 240px"
                           list->
                             {} $ :style
                               {} (:max-width 720) (:margin :auto)
@@ -151,7 +154,7 @@
                               ->
                                 concat
                                   [] $ {}
-                                    :date $ -> DateTime (.!local) (.!toFormat "\"yyyy-MM-dd")
+                                    :date $ -> DateTime (.!local) (.!toFormat |yyyy-MM-dd)
                                     :today? true
                                     :days 1
                                   , schedule
@@ -163,44 +166,49 @@
                         merge ui/center $ {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
                           :color $ hsl 0 0 80
                           :font-size 80
-                      <> "\"Loading..."
-        |comp-header $ %{} :CodeEntry (:doc |)
+                      <> |Loading...
+          :examples $ []
+        |comp-header $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             def comp-header $ div
               {} $ :style
-                merge ui/row-parted $ {} (:padding "\"12px 12px")
+                merge ui/row-parted $ {} (:padding "|12px 12px")
               div
                 {} $ :style
                   merge $ {} (:font-size 20)
-                <> "\"中文技术活动日程"
+                <> "|中文技术活动日程"
               div ({})
-                a $ {} (:href "\"https://github.com/b-conf/chinese-tech-conf-schedule") (:inner-text "\"Data source") (:target "\"_blank") (:class-name "\"minor-tip")
+                a $ {} (:href |https://github.com/b-conf/chinese-tech-conf-schedule) (:inner-text "|Data source") (:target |_blank) (:class-name |minor-tip)
                   :style $ {} (:font-family ui/font-fancy)
                 =< 8 nil
-                a $ {} (:href "\"https://github.com/b-conf/conf-dates") (:inner-text "\"Fork") (:target "\"_blank") (:class-name "\"minor-tip")
+                a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:class-name |minor-tip)
                   :style $ {} (:font-family ui/font-fancy)
-        |comp-today $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |comp-today $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             def comp-today $ div
-              {} (:id "\"today")
+              {} (:id |today)
                 :style $ merge ui/center
-                  {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius "\"24px")
+                  {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius |24px)
                     :color $ hsl 0 0 100
-                    :box-shadow $ str "\"0 0 4px " (hsl 240 80 50 0.2)
+                    :box-shadow $ str "|0 0 4px " (hsl 240 80 50 0.2)
                     :background-color $ hsl 220 90 76
-              <> "\"Today"
-        |effect-scroll $ %{} :CodeEntry (:doc |)
+              <> |Today
+          :examples $ []
+        |effect-scroll $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defeffect effect-scroll (schedule) (action el at?)
               when (some? schedule)
                 js/setTimeout
                   fn () $ js/document.body.scrollTo 0
-                    wo-log $ .-offsetTop (js/document.querySelector "\"#today")
+                    wo-log $ .-offsetTop (js/document.querySelector |#today)
                   , 300
-        |inline $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |inline $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defmacro inline (path) (read-file path)
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.core :as ui)
             respo.util.format :refer $ hsl
@@ -209,35 +217,41 @@
             reel.comp.reel :refer $ comp-reel
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
-            "\"luxon" :refer $ DateTime
+            |luxon :refer $ DateTime
     |app.config $ %{} :FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |)
+        |dev? $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            def dev? $ = "\"dev" (get-env "\"mode" "\"release")
-        |site $ %{} :CodeEntry (:doc |)
+            def dev? $ = |dev (get-env |mode |release)
+          :examples $ []
+        |site $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            def site $ {} (:storage-key "\"workflow")
-        |year $ %{} :CodeEntry (:doc |)
+            def site $ {} (:storage-key |workflow)
+          :examples $ []
+        |year $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            def year $ get-env "\"year" "\"2023"
-      :ns $ %{} :CodeEntry (:doc |)
+            def year $ get-env |year |2023
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns app.config)
     |app.main $ %{} :FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |)
+        |*reel $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
-        |dispatch! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |dispatch! $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn dispatch! (op)
               when
                 and config/dev? $ not= :states (nth op 0)
-                js/console.log "\"Dispatch:" op
+                js/console.log |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
-        |load-json-data! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |load-json-data! $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            defn load-json-data! () (hint-fn async)
+            defn load-json-data! ()
+              hint-fn $ {} (:async true)
               let
                   resource $ js-await (js/fetch schedule-url)
                   json-data $ js-await (.!json resource)
@@ -247,34 +261,40 @@
                         fn (k v)
                           [] (turn-tag k) v
                 dispatch! $ :: :load-confs data
-        |main! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |main! $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
-              println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+              println "|Running mode:" $ if config/dev? |dev |release
               render-app!
               add-watch *reel :changes $ fn (reel prev) (render-app!)
               listen-devtools! |k dispatch!
               load-json-data!
               println "|App started."
-        |mount-target $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |mount-target $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             def mount-target $ .!querySelector js/document |.app
-        |reload! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |reload! $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            defn reload! () $ if (some? build-errors) (tip! "\"error" build-errors)
+            defn reload! () $ if (some? build-errors) (tip! |error build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
                 add-watch *reel :changes $ fn (reel prev) (render-app!)
                 reset! *reel $ refresh-reel @*reel schema/store updater
-                tip! "\"ok~" "\"Ok"
+                tip! |ok~ |Ok
                 load-json-data!
-        |render-app! $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |render-app! $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
-        |schedule-url $ %{} :CodeEntry (:doc |)
+          :examples $ []
+        |schedule-url $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
-            def schedule-url $ str "\"//r.tiye.me/b-conf/chinese-tech-conf-schedule/" config/year "\".json"
-      :ns $ %{} :CodeEntry (:doc |)
+            def schedule-url $ str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.main $ :require
             respo.core :refer $ render! clear-cache!
@@ -285,21 +305,22 @@
             reel.core :refer $ reel-updater refresh-reel
             reel.schema :as reel-schema
             app.config :as config
-            "\"bottom-tip" :default tip!
-            "\"./calcit.build-errors" :default build-errors
+            |bottom-tip :default tip!
+            |./calcit.build-errors :default build-errors
     |app.schema $ %{} :FileEntry
       :defs $ {}
-        |store $ %{} :CodeEntry (:doc |)
+        |store $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             def store $ {}
               :states $ {}
                 :cursor $ []
               :confs nil
-      :ns $ %{} :CodeEntry (:doc |)
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote (ns app.schema)
     |app.updater $ %{} :FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |)
+        |updater $ %{} :CodeEntry (:doc |) (:schema nil)
           :code $ quote
             defn updater (store op op-id op-time)
               tag-match op
@@ -307,8 +328,9 @@
                   update-states store cursor s
                 (:load-confs data) (assoc store :confs data)
                 (:hydrate-storage data) data
-                _ $ do (eprintln "\"Unknown op:" op) store
-      :ns $ %{} :CodeEntry (:doc |)
+                _ $ do (eprintln "|Unknown op:" op) store
+          :examples $ []
+      :ns $ %{} :NsEntry (:doc |)
         :code $ quote
           ns app.updater $ :require
             respo.cursor :refer $ update-states
