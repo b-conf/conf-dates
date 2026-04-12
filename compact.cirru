@@ -127,6 +127,7 @@
                     :href $ :url conf
                     :inner-text $ :url conf
                     :target |_blank
+                    :rel |noopener noreferrer
                     :style $ {}
                       :color $ hsl 200 80 76
                       :font-size 12
@@ -178,10 +179,10 @@
                   merge $ {} (:font-size 20)
                 <> "|中文技术活动日程"
               div ({})
-                a $ {} (:href |https://github.com/b-conf/chinese-tech-conf-schedule) (:inner-text "|Data source") (:target |_blank) (:class-name |minor-tip)
+                a $ {} (:href |https://github.com/b-conf/chinese-tech-conf-schedule) (:inner-text "|Data source") (:target |_blank) (:rel |noopener noreferrer) (:class-name |minor-tip)
                   :style $ {} (:font-family ui/font-fancy)
                 =< 8 nil
-                a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:class-name |minor-tip)
+                a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:rel |noopener noreferrer) (:class-name |minor-tip)
                   :style $ {} (:font-family ui/font-fancy)
           :examples $ []
         |comp-today $ %{} :CodeEntry (:doc |) (:schema nil)
