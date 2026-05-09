@@ -1,12 +1,12 @@
 
-{} (:about "|file is generated - never edit directly; learn cr edit/tree workflows before changing") (:package |app)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/compact.cirru |lilac/compact.cirru |memof/compact.cirru |respo-ui.calcit/compact.cirru |respo-markdown.calcit/compact.cirru |reel.calcit/compact.cirru
   :entries $ {}
   :files $ {}
     |app.comp.container $ %{} :FileEntry
       :defs $ {}
-        |arrange-list $ %{} :CodeEntry (:doc |) (:schema nil)
+        |arrange-list $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn arrange-list (acc confs previous-conf)
               if (empty? confs)
@@ -19,7 +19,7 @@
                     rest confs
                     if (:far? conf) previous-conf conf
           :examples $ []
-        |comp-card $ %{} :CodeEntry (:doc |) (:schema nil)
+        |comp-card $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
               let
@@ -85,7 +85,7 @@
                             <> $ str days "| days"
                   if (:today? conf) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
           :examples $ []
-        |comp-conf-info $ %{} :CodeEntry (:doc |) (:schema nil)
+        |comp-conf-info $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn comp-conf-info (conf overlapped?)
               div
@@ -127,13 +127,13 @@
                     :href $ :url conf
                     :inner-text $ :url conf
                     :target |_blank
-                    :rel |noopener noreferrer
+                    :rel "|noopener noreferrer"
                     :style $ {}
                       :color $ hsl 200 80 76
                       :font-size 12
                       :white-space :nowrap
           :examples $ []
-        |comp-container $ %{} :CodeEntry (:doc |) (:schema nil)
+        |comp-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -169,7 +169,7 @@
                           :font-size 80
                       <> |Loading...
           :examples $ []
-        |comp-header $ %{} :CodeEntry (:doc |) (:schema nil)
+        |comp-header $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def comp-header $ div
               {} $ :style
@@ -179,13 +179,25 @@
                   merge $ {} (:font-size 20)
                 <> "|中文技术活动日程"
               div ({})
-                a $ {} (:href |https://github.com/b-conf/chinese-tech-conf-schedule) (:inner-text "|Data source") (:target |_blank) (:rel |noopener noreferrer) (:class-name |minor-tip)
-                  :style $ {} (:font-family ui/font-fancy)
+                a $ {}
+                  :href |https://github.com/b-conf/chinese-tech-conf-schedule
+                  :inner-text "|Data source"
+                  :target |_blank
+                  :rel "|noopener noreferrer"
+                  :class-name |minor-tip
+                  :style $ {}
+                    :font-family ui/font-fancy
                 =< 8 nil
-                a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:rel |noopener noreferrer) (:class-name |minor-tip)
-                  :style $ {} (:font-family ui/font-fancy)
+                a $ {}
+                  :href |https://github.com/b-conf/conf-dates
+                  :inner-text |Fork
+                  :target |_blank
+                  :rel "|noopener noreferrer"
+                  :class-name |minor-tip
+                  :style $ {}
+                    :font-family ui/font-fancy
           :examples $ []
-        |comp-today $ %{} :CodeEntry (:doc |) (:schema nil)
+        |comp-today $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def comp-today $ div
               {} (:id |today)
@@ -196,7 +208,7 @@
                     :background-color $ hsl 220 90 76
               <> |Today
           :examples $ []
-        |effect-scroll $ %{} :CodeEntry (:doc |) (:schema nil)
+        |effect-scroll $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defeffect effect-scroll (schedule) (action el at?)
               when (some? schedule)
@@ -205,7 +217,7 @@
                     wo-log $ .-offsetTop (js/document.querySelector |#today)
                   , 300
           :examples $ []
-        |inline $ %{} :CodeEntry (:doc |) (:schema nil)
+        |inline $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defmacro inline (path) (read-file path)
           :examples $ []
@@ -221,15 +233,15 @@
             |luxon :refer $ DateTime
     |app.config $ %{} :FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |) (:schema nil)
+        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def dev? $ = |dev (get-env |mode |release)
           :examples $ []
-        |site $ %{} :CodeEntry (:doc |) (:schema nil)
+        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def site $ {} (:storage-key |workflow)
           :examples $ []
-        |year $ %{} :CodeEntry (:doc |) (:schema nil)
+        |year $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def year $ get-env |year |2023
           :examples $ []
@@ -237,11 +249,11 @@
         :code $ quote (ns app.config)
     |app.main $ %{} :FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |) (:schema nil)
+        |*reel $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-        |dispatch! $ %{} :CodeEntry (:doc |) (:schema nil)
+        |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn dispatch! (op)
               when
@@ -249,7 +261,7 @@
                 js/console.log |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
-        |load-json-data! $ %{} :CodeEntry (:doc |) (:schema nil)
+        |load-json-data! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn load-json-data! ()
               hint-fn $ {} (:async true)
@@ -263,7 +275,7 @@
                           [] (turn-tag k) v
                 dispatch! $ :: :load-confs data
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |) (:schema nil)
+        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -274,11 +286,11 @@
               load-json-data!
               println "|App started."
           :examples $ []
-        |mount-target $ %{} :CodeEntry (:doc |) (:schema nil)
+        |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def mount-target $ .!querySelector js/document |.app
           :examples $ []
-        |reload! $ %{} :CodeEntry (:doc |) (:schema nil)
+        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn reload! () $ if (some? build-errors) (tip! |error build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -287,11 +299,11 @@
                 tip! |ok~ |Ok
                 load-json-data!
           :examples $ []
-        |render-app! $ %{} :CodeEntry (:doc |) (:schema nil)
+        |render-app! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
-        |schedule-url $ %{} :CodeEntry (:doc |) (:schema nil)
+        |schedule-url $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def schedule-url $ str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json
           :examples $ []
@@ -310,7 +322,7 @@
             |./calcit.build-errors :default build-errors
     |app.schema $ %{} :FileEntry
       :defs $ {}
-        |store $ %{} :CodeEntry (:doc |) (:schema nil)
+        |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def store $ {}
               :states $ {}
@@ -321,12 +333,11 @@
         :code $ quote (ns app.schema)
     |app.updater $ %{} :FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |) (:schema nil)
+        |updater $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             defn updater (store op op-id op-time)
               tag-match op
-                  :states cursor s
-                  update-states store cursor s
+                (:states cursor s) (update-states store cursor s)
                 (:load-confs data) (assoc store :confs data)
                 (:hydrate-storage data) data
                 _ $ do (eprintln "|Unknown op:" op) store
