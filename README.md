@@ -20,7 +20,7 @@ ct # 启动编辑器, 需要打开网页编辑
 安装 [Calcit](https://github.com/calcit-lang/calcit)用于编译 JavaScript:
 
 ```bash
-caps && cr --emit-js # 编译代码到 js
+caps && cr js # 编译代码到 js
 ```
 
 调试网页
@@ -32,7 +32,7 @@ yarn vite
 ### Build page
 
 ```bash
-yarn && yarn vite build --path=./
+yarn install --immutable && yarn vite build --base=./
 ```
 
 ### Workflow

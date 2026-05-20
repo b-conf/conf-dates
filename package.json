@@ -6,7 +6,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.33",
+    "@calcit/procs": "^0.12.35",
     "luxon": "^3.4.4"
   },
   "devDependencies": {
