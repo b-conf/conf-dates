@@ -1,6 +1,4 @@
-
-Conf Dates
-----
+## Conf Dates
 
 > try a visual way displaying conf dates.
 > Data from [chinese-tech-conf-schedule](https://github.com/hax/chinese-tech-conf-schedule/tree/master).
