@@ -249,7 +249,7 @@
                 js/console.log |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
-        |load-json-data! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |load-json-data! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn load-json-data! ()
               hint-fn $ {} (:async true)
@@ -263,7 +263,11 @@
                           [] (turn-tag k) v
                 dispatch! $ :: :load-confs data
           :examples $ []
-        |main! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
+        |main! $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -274,6 +278,10 @@
               load-json-data!
               println "|App started."
           :examples $ []
+          :schema $ :: :fn
+            {} (:return :dynamic)
+              :args $ []
+              :features $ #{} :js-ffi
         |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
           :code $ quote
             def mount-target $ .!querySelector js/document |.app
