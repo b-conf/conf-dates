@@ -22,7 +22,7 @@
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'Dynamic)
-              :args $ [] 'Dynamic (:: 'List 'app.schema/Conf) (:: 'Option 'app.schema/Conf)
+              :args $ [] 'Dynamic (:: 'List 'app.types/Conf) (:: 'Option 'app.types/Conf)
         |comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
@@ -87,7 +87,7 @@
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'respo.schema/Component)
-              :args $ [] 'app.schema/Conf (:: 'Option 'app.schema/Conf) (:: 'Option 'app.schema/Conf)
+              :args $ [] 'app.types/Conf (:: 'Option 'app.types/Conf) (:: 'Option 'app.types/Conf)
         |comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn comp-conf-info (conf overlapped?)
@@ -137,7 +137,7 @@
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'respo.schema/Component)
-              :args $ [] 'app.schema/Conf 'Bool
+              :args $ [] 'app.types/Conf 'Bool
         |comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
@@ -145,7 +145,7 @@
                   store $ reel.schema/read-field reel :store
                   states $ reel.schema/read-field store :states
                   schedule $ unsafe-coerce (reel.schema/read-field store :confs)
-                    :: 'Option $ :: 'List 'app.schema/Conf
+                    :: 'Option $ :: 'List 'app.types/Conf
                 [] (effect-scroll schedule)
                   if (some? schedule)
                     div
@@ -160,7 +160,7 @@
                             arrange-list ([])
                               ->
                                 concat
-                                  [] $ %{} app.schema/Conf (:name |)
+                                  [] $ %{} app.types/Conf (:name |)
                                     :date $ today-string
                                     :days 1
                                     :city |
@@ -324,6 +324,7 @@
             reel.comp.reel :refer $ comp-reel
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
+            app.types :refer $ Conf
             |luxon :refer $ DateTime
     |app.config $ %{} 'FileEntry
       :defs $ {}
@@ -434,6 +435,19 @@
             |./calcit.build-errors :default build-errors
     |app.schema $ %{} 'FileEntry
       :defs $ {}
+        |store $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            def store $ %{} app.types/Store
+              :states $ {}
+              :confs %none
+          :examples $ []
+          :schema $ :: 'app.types/Store
+      :ns $ %{} 'NsEntry (:doc |)
+        :code $ quote
+          ns app.schema $ :require
+            app.types :refer $ Store
+    |app.types $ %{} 'FileEntry
+      :defs $ {}
         |Conf $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
@@ -445,15 +459,8 @@
               :confs $ :: 'Option (:: 'List Conf)
           :examples $ []
           :schema $ :: 'Dynamic
-        |store $ %{} 'CodeEntry (:doc |)
-          :code $ quote
-            def store $ %{} Store
-              :states $ {}
-              :confs %none
-          :examples $ []
-          :schema $ :: 'Store
       :ns $ %{} 'NsEntry (:doc |)
-        :code $ quote (ns app.schema)
+        :code $ quote (ns app.types)
     |app.updater $ %{} 'FileEntry
       :defs $ {}
         |updater $ %{} 'CodeEntry (:doc |)
