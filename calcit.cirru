@@ -1,60 +1,61 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
-  :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!) (:version |0.0.1)
-    :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app) (:version |0.0.1)
   :entries $ {}
+    :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
+      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+      :type-slots $ {}
   :files $ {}
-    |app.comp.container $ %{} :FileEntry
+    |app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        |arrange-list $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |arrange-list $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn arrange-list (acc confs previous-conf)
               if (empty? confs)
                 map-indexed acc $ fn (idx x) ([] idx x)
                 let
-                    conf $ first confs
+                    conf $ option:unwrap (first confs)
                   recur
                     conj acc $ comp-card conf previous-conf
                       first $ rest confs
                     rest confs
-                    if (:far? conf) previous-conf conf
+                    if (&struct:get conf :far?) previous-conf $ %some conf
           :examples $ []
-        |comp-card $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic (:: 'List 'app.types/Conf) (:: 'Option 'app.types/Conf)
+        |comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
               let
-                  date $ -> DateTime
-                    .!fromISO $ :date conf
-                    .!startOf |day
-                  prev-date $ -> DateTime
-                    .!fromISO $ :date prev-conf
-                    .!startOf |day
-                  next-date $ -> DateTime
-                    .!fromISO $ :date next-conf
-                    .!startOf |day
+                  date $ start-of-day
+                    parse-date $ &struct:get conf :date
+                  prev-date $ start-of-day
+                    parse-date $ &struct:get (option:unwrap-or prev-conf conf) :date
+                  next-date $ start-of-day
+                    parse-date $ &struct:get (option:unwrap-or next-conf conf) :date
                   overlap-with-prev? $ if
-                    or (nil? prev-conf) (:today? prev-conf) (:today? conf)
+                    or (option:none? prev-conf)
+                      &struct:get (option:unwrap-or prev-conf conf) :today?
+                      &struct:get conf :today?
                     , false
                       let
-                          end-date $ -> prev-date
-                            .!plus $ js-object
-                              :days $ dec
-                                js/Math.ceil $ :days prev-conf
+                          end-date $ date-plus-days prev-date
+                            dec $ math-ceil
+                              &struct:get (option:unwrap-or prev-conf conf) :days
                         if
-                          and (.-isValid end-date) (.-isValid date)
-                          >= (.!toISO end-date) (.!toISO date)
+                          and (date-valid? end-date) (date-valid? date)
+                          >= (date-to-iso end-date) (date-to-iso date)
                           , false
                   overlap-with-next? $ if
-                    or (nil? next-conf) (:today? conf) (:today? next-conf)
+                    or (option:none? next-conf) (&struct:get conf :today?)
+                      &struct:get (option:unwrap-or next-conf conf) :today?
                     , false
                       let
-                          end-date $ -> date
-                            .!plus $ js-object
-                              :days $ dec
-                                js/Math.ceil $ :days conf
+                          end-date $ date-plus-days date
+                            dec $ math-ceil (&struct:get conf :days)
                         if
-                          and (.-isValid end-date) (.-isValid next-date)
-                          >= (.!toISO end-date) (.!toISO next-date)
+                          and (date-valid? end-date) (date-valid? next-date)
+                          >= (date-to-iso end-date) (date-to-iso next-date)
                           , false
                 div
                   {} $ :style ui/column
@@ -66,14 +67,13 @@
                         :padding "|0 16px"
                         :border-top $ str "|2px dashed " (hsl 0 0 100)
                         :text-align :center
-                    if (nil? prev-conf)
+                    if (option:none? prev-conf)
                       div $ {}
                       let
-                          prev-end-date $ -> prev-date
-                            .!plus $ js-object
-                              :days $ dec
-                                js/Math.ceil $ :days prev-conf
-                          days $ .-days (.!diff date prev-end-date |days)
+                          prev-end-date $ date-plus-days prev-date
+                            dec $ math-ceil
+                              &struct:get (option:unwrap-or prev-conf conf) :days
+                          days $ date-diff-days date prev-end-date
                         if (> days 0)
                           div
                             {} $ :style
@@ -83,9 +83,12 @@
                                   + 4 $ * 18 (sqrt days)
                                   , |px
                             <> $ str days "| days"
-                  if (:today? conf) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
+                  if (&struct:get conf :today?) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
           :examples $ []
-        |comp-conf-info $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'respo.schema/Component)
+              :args $ [] 'app.types/Conf (:: 'Option 'app.types/Conf) (:: 'Option 'app.types/Conf)
+        |comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn comp-conf-info (conf overlapped?)
               div
@@ -110,9 +113,8 @@
                   <>
                     str
                       let
-                          date $ ->
-                            .!fromISO DateTime $ :date conf
-                        if (.-isValid date) (.!toFormat date "|yyyy-MM-dd ccc") |
+                          date $ parse-date (:date conf)
+                        if (date-valid? date) (date-to-format date "|yyyy-MM-dd ccc") |
                       , "| " $ if
                         > (:days conf) 1
                         str "|(" (:days conf) "|d)"
@@ -133,13 +135,16 @@
                       :font-size 12
                       :white-space :nowrap
           :examples $ []
-        |comp-container $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'respo.schema/Component)
+              :args $ [] 'app.types/Conf 'Bool
+        |comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
               let
-                  store $ :store reel
-                  states $ :states store
-                  schedule $ :confs store
+                  store $ reel.schema/read-field reel :store
+                  states $ reel.schema/read-field store :states
+                  schedule $ unsafe-coerce (reel.schema/read-field store :confs) (:: 'List 'app.types/Conf)
                 [] (effect-scroll schedule)
                   if (some? schedule)
                     div
@@ -154,13 +159,18 @@
                             arrange-list ([])
                               ->
                                 concat
-                                  [] $ {}
-                                    :date $ -> DateTime (.!local) (.!toFormat |yyyy-MM-dd)
-                                    :today? true
+                                  [] $ %{} app.types/Conf (:name |)
+                                    :date $ today-string
                                     :days 1
+                                    :city |
+                                    :host |
+                                    :url |
+                                    :code |
+                                    :today? true
+                                    :far? false
                                   , schedule
-                                .sort-by :date
-                              , nil
+                                .sort-by $ fn (x) (&struct:get x :date)
+                              %none
                         when dev? $ comp-reel (>> states :reel) reel ({})
                     div
                       {} $ :style
@@ -169,7 +179,8 @@
                           :font-size 80
                       <> |Loading...
           :examples $ []
-        |comp-header $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def comp-header $ div
               {} $ :style
@@ -185,7 +196,8 @@
                 a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:rel "|noopener noreferrer") (:class-name |minor-tip)
                   :style $ {} (:font-family ui/font-fancy)
           :examples $ []
-        |comp-today $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |comp-today $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def comp-today $ div
               {} (:id |today)
@@ -196,20 +208,113 @@
                     :background-color $ hsl 220 90 76
               <> |Today
           :examples $ []
-        |effect-scroll $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |date-diff-days $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn date-diff-days (a b)
+              let
+                  diff $ unsafe-coerce (.!diff a b |days) js-object
+                unsafe-coerce (.-days diff) Number
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'Number)
+              :args $ [] 'JsObject 'JsObject
+              :features $ #{} :js-ffi
+        |date-plus-days $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn date-plus-days (d days)
+              unsafe-coerce
+                .!plus d $ js-object (:days days)
+                , js-object
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'JsObject)
+              :args $ [] 'JsObject 'Number
+              :features $ #{} :js-ffi
+        |date-to-format $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn date-to-format (d fmt)
+              unsafe-coerce (.!toFormat d fmt) String
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'String)
+              :args $ [] 'JsObject 'String
+              :features $ #{} :js-ffi
+        |date-to-iso $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn date-to-iso (d)
+              unsafe-coerce (.!toISO d) String
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'String)
+              :args $ [] 'JsObject
+              :features $ #{} :js-ffi
+        |date-valid? $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn date-valid? (d)
+              unsafe-coerce (.-isValid d) Bool
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'Bool)
+              :args $ [] 'JsObject
+              :features $ #{} :js-ffi
+        |effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defeffect effect-scroll (schedule) (action el at?)
               when (some? schedule)
                 js/setTimeout
                   fn () $ js/document.body.scrollTo 0
-                    wo-log $ .-offsetTop (js/document.querySelector |#today)
+                    wo-log $ .-offsetTop
+                      unsafe-coerce (js/document.querySelector |#today) js-object
                   , 300
           :examples $ []
-        |inline $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
+              :args $ [] 'Dynamic
+              :features $ #{} :js-ffi
+        |inline $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defmacro inline (path) (read-file path)
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |math-ceil $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn math-ceil (x)
+              unsafe-coerce (js/Math.ceil x) Number
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'Number)
+              :args $ [] 'Number
+              :features $ #{} :js-ffi
+        |parse-date $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn parse-date (text)
+              unsafe-coerce (.!fromISO DateTime text) js-object
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'JsObject)
+              :args $ [] 'String
+              :features $ #{} :js-ffi
+        |start-of-day $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn start-of-day (d)
+              unsafe-coerce (.!startOf d |day) js-object
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'JsObject)
+              :args $ [] 'JsObject
+              :features $ #{} :js-ffi
+        |today-string $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn today-string () $ let
+                now $ unsafe-coerce (.!local DateTime) js-object
+              unsafe-coerce (.!toFormat now |yyyy-MM-dd) String
+          :examples $ []
+          :schema $ :: 'Fn
+            {} (:return 'String)
+              :args $ []
+              :features $ #{} :js-ffi
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.comp.container $ :require (respo-ui.core :as ui)
             respo.util.format :refer $ hsl
@@ -218,30 +323,36 @@
             reel.comp.reel :refer $ comp-reel
             respo-md.comp.md :refer $ comp-md
             app.config :refer $ dev?
+            app.types :refer $ Conf
             |luxon :refer $ DateTime
-    |app.config $ %{} :FileEntry
+    |app.config $ %{} 'FileEntry
       :defs $ {}
-        |dev? $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def dev? $ = |dev (get-env |mode |release)
+            def dev? $ = |dev
+              option:unwrap-or (get-env |mode) |release
           :examples $ []
-        |site $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Bool
+        |site $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key |workflow)
           :examples $ []
-        |year $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |year $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def year $ get-env |year |2023
+            def year $ option:unwrap-or (get-env |year) |2023
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'String
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.config)
-    |app.main $ %{} :FileEntry
+    |app.main $ %{} 'FileEntry
       :defs $ {}
-        |*reel $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
-        |dispatch! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op)
               when
@@ -249,7 +360,8 @@
                 js/console.log |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
-        |load-json-data! $ %{} :CodeEntry (:doc |)
+          :schema $ :: 'Dynamic
+        |load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn load-json-data! ()
               hint-fn $ {} (:async true)
@@ -261,13 +373,26 @@
                       -> obj $ map-kv
                         fn (k v)
                           [] (turn-tag k) v
+                    map $ fn (m)
+                      %{} app.types/Conf
+                        :name $ option:unwrap-or (get m :name) |
+                        :date $ option:unwrap-or (get m :date) |
+                        :days $ unsafe-coerce
+                          option:unwrap-or (get m :days) 0
+                          , Number
+                        :city $ option:unwrap-or (get m :city) |
+                        :host $ option:unwrap-or (get m :host) |
+                        :url $ option:unwrap-or (get m :url) |
+                        :code $ option:unwrap-or (get m :code) |
+                        :today? false
+                        :far? false
                 dispatch! $ :: :load-confs data
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |main! $ %{} :CodeEntry (:doc |)
+        |main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -278,15 +403,16 @@
               load-json-data!
               println "|App started."
           :examples $ []
-          :schema $ :: :fn
-            {} (:return :dynamic)
+          :schema $ :: 'Fn
+            {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |mount-target $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def mount-target $ .!querySelector js/document |.app
+            def mount-target $ js/document.querySelector |.app
           :examples $ []
-        |reload! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (some? build-errors) (tip! |error build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -295,41 +421,62 @@
                 tip! |ok~ |Ok
                 load-json-data!
           :examples $ []
-        |render-app! $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
-        |schedule-url $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+          :schema $ :: 'Dynamic
+        |schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def schedule-url $ str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.main $ :require
             respo.core :refer $ render! clear-cache!
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
+            app.types :refer $ Conf
             reel.util :refer $ listen-devtools!
             reel.core :refer $ reel-updater refresh-reel
             reel.schema :as reel-schema
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
-    |app.schema $ %{} :FileEntry
+    |app.schema $ %{} 'FileEntry
       :defs $ {}
-        |store $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |store $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            def store $ {}
+            def store $ %{} app.types/Store
               :states $ {}
-                :cursor $ []
-              :confs nil
+              :confs $ []
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
-        :code $ quote (ns app.schema)
-    |app.updater $ %{} :FileEntry
+          :schema $ :: 'app.types/Store
+      :ns $ %{} 'NsEntry (:doc |)
+        :code $ quote
+          ns app.schema $ :require
+            app.types :refer $ Store
+    |app.types $ %{} 'FileEntry
       :defs $ {}
-        |updater $ %{} :CodeEntry (:doc |) (:schema :dynamic)
+        |Conf $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defstruct Store (:states 'Map)
+              :confs $ :: 'List Conf
+          :examples $ []
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
+        :code $ quote (ns app.types)
+    |app.updater $ %{} 'FileEntry
+      :defs $ {}
+        |updater $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn updater (store op op-id op-time)
               tag-match op
@@ -338,7 +485,8 @@
                 (:hydrate-storage data) data
                 _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-      :ns $ %{} :NsEntry (:doc |)
+          :schema $ :: 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
         :code $ quote
           ns app.updater $ :require
             respo.cursor :refer $ update-states
