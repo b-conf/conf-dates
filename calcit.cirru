@@ -144,8 +144,7 @@
               let
                   store $ reel.schema/read-field reel :store
                   states $ reel.schema/read-field store :states
-                  schedule $ unsafe-coerce (reel.schema/read-field store :confs)
-                    :: 'Option $ :: 'List 'app.types/Conf
+                  schedule $ unsafe-coerce (reel.schema/read-field store :confs) (:: 'List 'app.types/Conf)
                 [] (effect-scroll schedule)
                   if (some? schedule)
                     div
@@ -169,7 +168,7 @@
                                     :code |
                                     :today? true
                                     :far? false
-                                  option:unwrap schedule
+                                  , schedule
                                 .sort-by $ fn (x) (&struct:get x :date)
                               %none
                         when dev? $ comp-reel (>> states :reel) reel ({})
@@ -374,6 +373,19 @@
                       -> obj $ map-kv
                         fn (k v)
                           [] (turn-tag k) v
+                    map $ fn (m)
+                      %{} app.types/Conf
+                        :name $ option:unwrap-or (get m :name) |
+                        :date $ option:unwrap-or (get m :date) |
+                        :days $ unsafe-coerce
+                          option:unwrap-or (get m :days) 0
+                          , Number
+                        :city $ option:unwrap-or (get m :city) |
+                        :host $ option:unwrap-or (get m :host) |
+                        :url $ option:unwrap-or (get m :url) |
+                        :code $ option:unwrap-or (get m :code) |
+                        :today? false
+                        :far? false
                 dispatch! $ :: :load-confs data
           :examples $ []
           :schema $ :: 'Fn
@@ -427,6 +439,7 @@
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
+            app.types :refer $ Conf
             reel.util :refer $ listen-devtools!
             reel.core :refer $ reel-updater refresh-reel
             reel.schema :as reel-schema
@@ -439,7 +452,7 @@
           :code $ quote
             def store $ %{} app.types/Store
               :states $ {}
-              :confs %none
+              :confs $ []
           :examples $ []
           :schema $ :: 'app.types/Store
       :ns $ %{} 'NsEntry (:doc |)
@@ -456,7 +469,7 @@
         |Store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstruct Store (:states 'Map)
-              :confs $ :: 'Option (:: 'List Conf)
+              :confs $ :: 'List Conf
           :examples $ []
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
