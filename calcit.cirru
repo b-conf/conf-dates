@@ -30,28 +30,21 @@
               let
                   prev-conf-value $ option:unwrap-or prev-conf conf
                   next-conf-value $ option:unwrap-or next-conf conf
-                  date $ start-of-day
-                    parse-date conf.:date
-                  prev-date $ start-of-day
-                    parse-date prev-conf-value.:date
-                  next-date $ start-of-day
-                    parse-date next-conf-value.:date
+                  date $ start-of-day (parse-date conf.:date)
+                  prev-date $ start-of-day (parse-date prev-conf-value.:date)
+                  next-date $ start-of-day (parse-date next-conf-value.:date)
                   overlap-with-prev? $ if
-                    or (option:none? prev-conf)
-                      prev-conf-value.:today?
-                      conf.:today?
+                    or (option:none? prev-conf) (prev-conf-value.:today?) (conf.:today?)
                     , false
                       let
                           end-date $ date-plus-days prev-date
-                            dec $ math-ceil
-                              prev-conf-value.:days
+                            dec $ math-ceil (prev-conf-value.:days)
                         if
                           and (date-valid? end-date) (date-valid? date)
                           >= (date-to-iso end-date) (date-to-iso date)
                           , false
                   overlap-with-next? $ if
-                    or (option:none? next-conf) conf.:today?
-                      next-conf-value.:today?
+                    or (option:none? next-conf) conf.:today? $ next-conf-value.:today?
                     , false
                       let
                           end-date $ date-plus-days date
@@ -74,8 +67,7 @@
                       div $ {}
                       let
                           prev-end-date $ date-plus-days prev-date
-                            dec $ math-ceil
-                              prev-conf-value.:days
+                            dec $ math-ceil (prev-conf-value.:days)
                           days $ date-diff-days date prev-end-date
                         if (> days 0)
                           div
