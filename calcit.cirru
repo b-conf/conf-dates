@@ -1,8 +1,9 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app) (:version |0.0.1)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
-      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/
+      :feature-policy $ {}
+      :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     |app.comp.container $ %{} 'FileEntry
@@ -18,7 +19,7 @@
                     conj acc $ comp-card conf previous-conf
                       first $ rest confs
                     rest confs
-                    if (&struct:get conf :far?) previous-conf $ %some conf
+                    if conf.:far? previous-conf $ %some conf
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'Dynamic)
@@ -27,32 +28,27 @@
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
               let
-                  date $ start-of-day
-                    parse-date $ &struct:get conf :date
-                  prev-date $ start-of-day
-                    parse-date $ &struct:get (option:unwrap-or prev-conf conf) :date
-                  next-date $ start-of-day
-                    parse-date $ &struct:get (option:unwrap-or next-conf conf) :date
+                  prev-conf-value $ option:unwrap-or prev-conf conf
+                  next-conf-value $ option:unwrap-or next-conf conf
+                  date $ start-of-day (parse-date conf.:date)
+                  prev-date $ start-of-day (parse-date prev-conf-value.:date)
+                  next-date $ start-of-day (parse-date next-conf-value.:date)
                   overlap-with-prev? $ if
-                    or (option:none? prev-conf)
-                      &struct:get (option:unwrap-or prev-conf conf) :today?
-                      &struct:get conf :today?
+                    or (option:none? prev-conf) (prev-conf-value.:today?) (conf.:today?)
                     , false
                       let
                           end-date $ date-plus-days prev-date
-                            dec $ math-ceil
-                              &struct:get (option:unwrap-or prev-conf conf) :days
+                            dec $ math-ceil (prev-conf-value.:days)
                         if
                           and (date-valid? end-date) (date-valid? date)
                           >= (date-to-iso end-date) (date-to-iso date)
                           , false
                   overlap-with-next? $ if
-                    or (option:none? next-conf) (&struct:get conf :today?)
-                      &struct:get (option:unwrap-or next-conf conf) :today?
+                    or (option:none? next-conf) conf.:today? $ next-conf-value.:today?
                     , false
                       let
                           end-date $ date-plus-days date
-                            dec $ math-ceil (&struct:get conf :days)
+                            dec $ math-ceil conf.:days
                         if
                           and (date-valid? end-date) (date-valid? next-date)
                           >= (date-to-iso end-date) (date-to-iso next-date)
@@ -71,8 +67,7 @@
                       div $ {}
                       let
                           prev-end-date $ date-plus-days prev-date
-                            dec $ math-ceil
-                              &struct:get (option:unwrap-or prev-conf conf) :days
+                            dec $ math-ceil (prev-conf-value.:days)
                           days $ date-diff-days date prev-end-date
                         if (> days 0)
                           div
@@ -83,7 +78,7 @@
                                   + 4 $ * 18 (sqrt days)
                                   , |px
                             <> $ str days "| days"
-                  if (&struct:get conf :today?) comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
+                          if conf.:today? comp-today $ comp-conf-info conf (or overlap-with-prev? overlap-with-next?)
           :examples $ []
           :schema $ :: 'Fn
             {} (:return 'respo.schema/Component)
@@ -169,7 +164,7 @@
                                     :today? true
                                     :far? false
                                   , schedule
-                                .sort-by $ fn (x) (&struct:get x :date)
+                                .sort-by $ fn (x) x.:date
                               %none
                         when dev? $ comp-reel (>> states :reel) reel ({})
                     div
@@ -465,13 +460,13 @@
           :code $ quote
             defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Enum
         |Store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstruct Store (:states 'Map)
               :confs $ :: 'List Conf
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Enum
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.types)
     |app.updater $ %{} 'FileEntry
