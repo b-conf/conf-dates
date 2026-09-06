@@ -1,14 +1,14 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --full` first. Manual edits must follow format and schema conventions, then run `calcit edit format`.") (:package |app)
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |lilac/ |memof/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
-    |app.comp.container $ %{} 'FileEntry
+    'app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        |arrange-list $ %{} 'CodeEntry (:doc |)
+        'arrange-list $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn arrange-list (acc confs previous-conf)
               if (empty? confs)
@@ -24,7 +24,7 @@
           :schema $ :: 'Fn
             {} (:return 'Dynamic)
               :args $ [] 'Dynamic (:: 'List 'app.types/Conf) (:: 'Option 'app.types/Conf)
-        |comp-card $ %{} 'CodeEntry (:doc |)
+        'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-card (conf prev-conf next-conf)
               let
@@ -41,7 +41,9 @@
                             dec $ math-ceil (prev-conf-value.:days)
                         if
                           and (date-valid? end-date) (date-valid? date)
-                          >= (date-to-iso end-date) (date-to-iso date)
+                          >=
+                            &compare (date-to-iso end-date) (date-to-iso date)
+                            , 0
                           , false
                   overlap-with-next? $ if
                     or (option:none? next-conf) conf.:today? $ next-conf-value.:today?
@@ -51,7 +53,9 @@
                             dec $ math-ceil conf.:days
                         if
                           and (date-valid? end-date) (date-valid? next-date)
-                          >= (date-to-iso end-date) (date-to-iso next-date)
+                          >=
+                            &compare (date-to-iso end-date) (date-to-iso next-date)
+                            , 0
                           , false
                 div
                   {} $ :style ui/column
@@ -83,12 +87,13 @@
           :schema $ :: 'Fn
             {} (:return 'respo.schema/Component)
               :args $ [] 'app.types/Conf (:: 'Option 'app.types/Conf) (:: 'Option 'app.types/Conf)
-        |comp-conf-info $ %{} 'CodeEntry (:doc |)
+        'comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn comp-conf-info (conf overlapped?)
               div
                 {} $ :style
-                  merge ui/column
+                  merge
+                    unsafe-coerce ui/column $ :: 'Map 'Tag 'Dynamic
                     {} (:padding "|12px 16px") (:border-radius |8px)
                       :background-color $ hsl 0 0 100
                     if overlapped?
@@ -97,7 +102,8 @@
                         :border $ str "|1px solid " (hsl 0 0 90)
                         :box-shadow $ str-spaced "|0 0 4px" (hsl 0 0 60 0.1)
                     if (:far? conf)
-                      {} $ :opacity 0.5
+                      {} $ :opacity |0.5
+                      {}
                 div ({})
                   <>
                     or (:name conf) |??
@@ -131,9 +137,9 @@
                       :white-space :nowrap
           :examples $ []
           :schema $ :: 'Fn
-            {} (:return 'respo.schema/Component)
+            {} (:return 'respo.schema/Element)
               :args $ [] 'app.types/Conf 'Bool
-        |comp-container $ %{} 'CodeEntry (:doc |)
+        'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defcomp comp-container (reel)
               let
@@ -175,7 +181,7 @@
                       <> |Loading...
           :examples $ []
           :schema $ :: 'Dynamic
-        |comp-header $ %{} 'CodeEntry (:doc |)
+        'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def comp-header $ div
               {} $ :style
@@ -192,7 +198,7 @@
                   :style $ {} (:font-family ui/font-fancy)
           :examples $ []
           :schema $ :: 'Dynamic
-        |comp-today $ %{} 'CodeEntry (:doc |)
+        'comp-today $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def comp-today $ div
               {} (:id |today)
@@ -204,7 +210,7 @@
               <> |Today
           :examples $ []
           :schema $ :: 'Dynamic
-        |date-diff-days $ %{} 'CodeEntry (:doc |)
+        'date-diff-days $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn date-diff-days (a b)
               let
@@ -215,7 +221,7 @@
             {} (:return 'Number)
               :args $ [] 'JsObject 'JsObject
               :features $ #{} :js-ffi
-        |date-plus-days $ %{} 'CodeEntry (:doc |)
+        'date-plus-days $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn date-plus-days (d days)
               unsafe-coerce
@@ -226,7 +232,7 @@
             {} (:return 'JsObject)
               :args $ [] 'JsObject 'Number
               :features $ #{} :js-ffi
-        |date-to-format $ %{} 'CodeEntry (:doc |)
+        'date-to-format $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn date-to-format (d fmt)
               unsafe-coerce (.!toFormat d fmt) String
@@ -235,7 +241,7 @@
             {} (:return 'String)
               :args $ [] 'JsObject 'String
               :features $ #{} :js-ffi
-        |date-to-iso $ %{} 'CodeEntry (:doc |)
+        'date-to-iso $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn date-to-iso (d)
               unsafe-coerce (.!toISO d) String
@@ -244,7 +250,7 @@
             {} (:return 'String)
               :args $ [] 'JsObject
               :features $ #{} :js-ffi
-        |date-valid? $ %{} 'CodeEntry (:doc |)
+        'date-valid? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn date-valid? (d)
               unsafe-coerce (.-isValid d) Bool
@@ -253,7 +259,7 @@
             {} (:return 'Bool)
               :args $ [] 'JsObject
               :features $ #{} :js-ffi
-        |effect-scroll $ %{} 'CodeEntry (:doc |)
+        'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defeffect effect-scroll (schedule) (action el at?)
               when (some? schedule)
@@ -267,12 +273,16 @@
             {} (:return 'Dynamic)
               :args $ [] 'Dynamic
               :features $ #{} :js-ffi
-        |inline $ %{} 'CodeEntry (:doc |)
+        'inline $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defmacro inline (path) (read-file path)
           :examples $ []
-          :schema $ :: 'Dynamic
-        |math-ceil $ %{} 'CodeEntry (:doc |)
+          :schema $ :: 'Macro
+            {}
+              :capabilities $ #{} :fs-read
+              :expansion $ :: 'Expr 'String
+              :required $ [] (:: 'Expr 'String)
+        'math-ceil $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn math-ceil (x)
               unsafe-coerce (js/Math.ceil x) Number
@@ -281,7 +291,7 @@
             {} (:return 'Number)
               :args $ [] 'Number
               :features $ #{} :js-ffi
-        |parse-date $ %{} 'CodeEntry (:doc |)
+        'parse-date $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn parse-date (text)
               unsafe-coerce (.!fromISO DateTime text) js-object
@@ -290,7 +300,7 @@
             {} (:return 'JsObject)
               :args $ [] 'String
               :features $ #{} :js-ffi
-        |start-of-day $ %{} 'CodeEntry (:doc |)
+        'start-of-day $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn start-of-day (d)
               unsafe-coerce (.!startOf d |day) js-object
@@ -299,7 +309,7 @@
             {} (:return 'JsObject)
               :args $ [] 'JsObject
               :features $ #{} :js-ffi
-        |today-string $ %{} 'CodeEntry (:doc |)
+        'today-string $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn today-string () $ let
                 now $ unsafe-coerce (.!local DateTime) js-object
@@ -320,43 +330,44 @@
             app.config :refer $ dev?
             app.types :refer $ Conf
             |luxon :refer $ DateTime
-    |app.config $ %{} 'FileEntry
+    'app.config $ %{} 'FileEntry
       :defs $ {}
-        |dev? $ %{} 'CodeEntry (:doc |)
+        'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def dev? $ = |dev
               option:unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
-        |site $ %{} 'CodeEntry (:doc |)
+        'site $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def site $ {} (:storage-key |workflow)
           :examples $ []
           :schema $ :: 'Dynamic
-        |year $ %{} 'CodeEntry (:doc |)
+        'year $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def year $ option:unwrap-or (get-env |year) |2023
           :examples $ []
           :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.config)
-    |app.main $ %{} 'FileEntry
+    'app.main $ %{} 'FileEntry
       :defs $ {}
-        |*reel $ %{} 'CodeEntry (:doc |)
+        '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defatom *reel $ -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
           :examples $ []
           :schema $ :: 'Dynamic
-        |dispatch! $ %{} 'CodeEntry (:doc |)
+        'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn dispatch! (op)
               when
-                and config/dev? $ not= :states (nth op 0)
+                and config/dev? $ not= :states
+                  option:unwrap-or (nth op 0) :unknown
                 js/console.log |Dispatch: op
               reset! *reel $ reel-updater updater @*reel op
           :examples $ []
           :schema $ :: 'Dynamic
-        |load-json-data! $ %{} 'CodeEntry (:doc |)
+        'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn load-json-data! ()
               hint-fn $ {} (:async true)
@@ -387,7 +398,7 @@
             {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |main! $ %{} 'CodeEntry (:doc |)
+        'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn main! ()
               if config/dev? $ load-console-formatter!
@@ -402,12 +413,12 @@
             {} (:return 'Dynamic)
               :args $ []
               :features $ #{} :js-ffi
-        |mount-target $ %{} 'CodeEntry (:doc |)
+        'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def mount-target $ js/document.querySelector |.app
           :examples $ []
           :schema $ :: 'Dynamic
-        |reload! $ %{} 'CodeEntry (:doc |)
+        'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn reload! () $ if (some? build-errors) (tip! |error build-errors)
               do (remove-watch *reel :changes) (clear-cache!)
@@ -417,12 +428,12 @@
                 load-json-data!
           :examples $ []
           :schema $ :: 'Dynamic
-        |render-app! $ %{} 'CodeEntry (:doc |)
+        'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
           :schema $ :: 'Dynamic
-        |schedule-url $ %{} 'CodeEntry (:doc |)
+        'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def schedule-url $ str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json
           :examples $ []
@@ -441,9 +452,9 @@
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
-    |app.schema $ %{} 'FileEntry
+    'app.schema $ %{} 'FileEntry
       :defs $ {}
-        |store $ %{} 'CodeEntry (:doc |)
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             def store $ %{} app.types/Store
               :states $ {}
@@ -454,14 +465,14 @@
         :code $ quote
           ns app.schema $ :require
             app.types :refer $ Store
-    |app.types $ %{} 'FileEntry
+    'app.types $ %{} 'FileEntry
       :defs $ {}
-        |Conf $ %{} 'CodeEntry (:doc |)
+        'Conf $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
           :schema $ :: 'Enum
-        |Store $ %{} 'CodeEntry (:doc |)
+        'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defstruct Store (:states 'Map)
               :confs $ :: 'List Conf
@@ -469,12 +480,12 @@
           :schema $ :: 'Enum
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote (ns app.types)
-    |app.updater $ %{} 'FileEntry
+    'app.updater $ %{} 'FileEntry
       :defs $ {}
-        |updater $ %{} 'CodeEntry (:doc |)
+        'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn updater (store op op-id op-time)
-              tag-match op
+              match op
                 (:states cursor s) (update-states store cursor s)
                 (:load-confs data) (assoc store :confs data)
                 (:hydrate-storage data) data
