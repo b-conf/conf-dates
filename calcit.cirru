@@ -74,7 +74,7 @@
                   if conf.:far? previous-conf $ %some conf
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'respo.schema/Component) (:: 'List 'app.types/Conf) (:: 'Option 'app.types/Conf)
+            :args $ [] (:: 'List 'respo.schema/Component) (:: 'List 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
             :return $ :: 'List $ :: 'List 'Dynamic
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
@@ -133,7 +133,7 @@
                         if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'app.types/Conf (:: 'Option 'app.types/Conf) (:: 'Option 'app.types/Conf)
+            :args $ [] 'app.types/Conf (:: 'calcit.core/Option 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
         'comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-conf-info (conf overlapped?)
             div
@@ -207,15 +207,7 @@
                             assert-type ([]) (:: 'List 'respo.schema/Component)
                             ->
                               concat
-                                [] $ %{} app.types/Conf (:name |)
-                                  :date $ today-string
-                                  :days 1
-                                  :city |
-                                  :host |
-                                  :url |
-                                  :code |
-                                  :today? true
-                                  :far? false
+                                [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
                             assert-type (%none) (:: 'Option 'app.types/Conf)
@@ -313,7 +305,8 @@
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'inline $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defmacro inline (path) (read-file path)
+          :code $ quote $ defmacro inline (path)
+            read-file $ str path
           :examples $ []
           :schema $ :: 'Macro $ {}
             :capabilities $ #{} :fs-read
@@ -407,16 +400,21 @@
                   map $ fn (obj)
                     -> obj $ filter-map-kv retag-entry
                   map $ fn (m)
-                    %{} app.types/Conf
-                      :name $ option:unwrap-or (get m :name) |
-                      :date $ option:unwrap-or (get m :date) |
-                      :days $ number-or-zero $ option:unwrap-or (get m :days) 0
-                      :city $ option:unwrap-or (get m :city) |
-                      :host $ option:unwrap-or (get m :host) |
-                      :url $ option:unwrap-or (get m :url) |
-                      :code $ option:unwrap-or (get m :code) |
-                      :today? false
-                      :far? false
+                    app.types/Conf :name
+                      option:unwrap-or (get m :name) |
+                      , :date
+                        option:unwrap-or (get m :date) |
+                        , :days
+                          number-or-zero $ option:unwrap-or (get m :days) 0
+                          , :city
+                            option:unwrap-or (get m :city) |
+                            , :host
+                              option:unwrap-or (get m :host) |
+                              , :url
+                                option:unwrap-or (get m :url) |
+                                , :code
+                                  option:unwrap-or (get m :code) |
+                                  , :today? false :far? false
               dispatch! $ :: :load-confs data
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -495,9 +493,7 @@
       :defs $ {} $ 'store
         %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            %{} app.types/Store
-              :states $ {}
-              :confs $ []
+            app.types/Store :states ({}) :confs $ []
           :examples $ []
           :schema $ :: 'app.types/Store
       :ns $ %{} 'NsEntry (:doc |)
