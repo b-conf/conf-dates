@@ -3,7 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!)
+    {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
@@ -71,7 +71,7 @@
                     first $ rest confs
                     :: 'Option 'app.types/Conf
                   rest confs
-                  if conf.:far? previous-conf $ %some conf
+                  if conf.:far? previous-conf $ Option :some conf
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'respo.schema/Component) (:: 'List 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
@@ -210,7 +210,7 @@
                                 [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type (%none) (:: 'Option 'app.types/Conf)
+                            assert-type (Option :none) (:: 'Option 'app.types/Conf)
                       when dev? $ comp-reel (>> states :reel) reel $ {}
                   div
                     {} $ :style $ merge ui/center
