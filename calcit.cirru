@@ -5,7 +5,7 @@
   :entries $ {} $ :default
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |respo-markdown.calcit/ |reel.calcit/ |js-ffi/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
       :type-slots $ {}
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
@@ -121,7 +121,7 @@
                         prev-end-date $ date-plus-days prev-date $ dec
                           math-ceil $ prev-conf-value.:days
                         days $ date-diff-days date prev-end-date
-                      if (> days 0)
+                      when (> days 0)
                         div
                           {} $ :style $ merge ui/row-middle
                             {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "|0 8px") (:margin "|8px 20px")
@@ -130,7 +130,7 @@
                                 + 4 $ * 18 $ sqrt days
                                 , |px
                           <> $ str days "| days"
-                        if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
+                if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'app.types/Conf (:: 'calcit.core/Option 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
@@ -191,9 +191,9 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ reel.schema/read-field reel :store
-                states $ reel.schema/read-field store :states
-                schedule $ unsafe-coerce (reel.schema/read-field store :confs) (:: 'List 'app.types/Conf)
+                store $ assert-type (reel.schema/read-field reel :store) (quote app.types/Store)
+                states $ :states store
+                schedule $ :confs store
               [] (effect-scroll schedule)
                 if (some? schedule)
                   div
@@ -345,15 +345,14 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.core :as ui)
-            respo.util.format :refer $ hsl
-            respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
-            respo.comp.space :refer $ =<
-            reel.comp.reel :refer $ comp-reel
-            respo-md.comp.md :refer $ comp-md
-            app.config :refer $ dev?
-            app.types :refer $ Conf
-            |luxon :refer $ DateTime
-            js-ffi.browser :refer $ query-selector
+            respo.util.format :refer $ [] hsl
+            respo.core :refer $ [] defcomp defeffect <> >> div button textarea span input a list->
+            respo.comp.space :refer $ [] =<
+            reel.comp.reel :refer $ [] comp-reel
+            app.config :refer $ [] dev?
+            app.types :refer $ [] Conf
+            |luxon :refer $ [] DateTime
+            js-ffi.browser :refer $ [] query-selector
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -504,7 +503,7 @@
         'Conf $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
         'Reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def Reel &unit
           :examples $ []
@@ -513,7 +512,7 @@
           :code $ quote $ defstruct Store (:states 'Map)
             :confs $ :: 'List Conf
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ :: 'StructDef
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
