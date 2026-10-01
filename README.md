@@ -9,16 +9,13 @@
 
 ### Dev
 
-安装[编辑器](https://github.com/calcit-lang/editor):
+使用 Calcit 0.27.0 与 Yarn 4.18.0。项目只维护 `calcit.cirru` / `deps.cirru`，不恢复 `compact.cirru` / `package.cirru`；CI 检查旧文件不存在。
 
 ```bash
-ct # 启动编辑器, 需要打开网页编辑
-```
-
-安装 [Calcit](https://github.com/calcit-lang/calcit)用于编译 JavaScript:
-
-```bash
-caps && cr js # 编译代码到 js
+caps --strict --ci
+yarn install --immutable
+calcit calcit.cirru --check-only
+yarn compile
 ```
 
 调试网页
@@ -30,8 +27,12 @@ yarn vite
 ### Build page
 
 ```bash
-yarn install --immutable && yarn vite build --base=./
+yarn compile
+VITE_BASE_URL=https://cos-sh.tiye.me/b-conf/conf-dates/pr/61/ yarn build
+node --test test/runtime.test.mjs
 ```
+
+未设置 `VITE_BASE_URL` 时，本地构建仍使用相对路径。每个 PR 使用独立的 `pr/<编号>/` 前缀与并发组，避免不同 PR 的验证互相取消。上传与公开访问校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原协议相对字体 URL、日程数据 URL 和服务器部署路径不变。
 
 ### Workflow
 
