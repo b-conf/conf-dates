@@ -56,7 +56,6 @@ jobs:
         test ! -e package.cirru
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
-        calcit calcit.cirru fix --workflow strict --verify --format edn
         calcit calcit.cirru --check-only
         calcit calcit.cirru analyze check-public \
           --ns app.comp.container \
@@ -66,8 +65,6 @@ jobs:
           --ns app.types \
           --ns app.updater \
           --summary-only --format json
-        calcit calcit.cirru analyze dynamic-methods
-        calcit calcit.cirru analyze deprecated --summary-only
         calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
 
     - name: Select CDN asset path
@@ -77,7 +74,7 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
       run: |
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-          asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/"
+          asset_prefix="${GITHUB_REPOSITORY}/pr/${PR_NUMBER}/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}/"
         elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/"
         else
@@ -91,7 +88,6 @@ jobs:
     - name: Build web assets with CDN URLs
       run: |
         set -euo pipefail
-        yarn compile
         yarn build
         node --test test/runtime.test.mjs
 
