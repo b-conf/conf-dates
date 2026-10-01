@@ -28,11 +28,11 @@ yarn vite
 
 ```bash
 yarn compile
-VITE_BASE_URL=https://cos-sh.tiye.me/b-conf/conf-dates/pr/ yarn build
+VITE_BASE_URL=https://cos-sh.tiye.me/b-conf/conf-dates/pr/61/ yarn build
 node --test test/runtime.test.mjs
 ```
 
-未设置 `VITE_BASE_URL` 时，本地构建仍使用相对路径。上传与公开访问校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原协议相对字体 URL、日程数据 URL 和服务器部署路径不变。
+未设置 `VITE_BASE_URL` 时，本地构建仍使用相对路径。每个 PR 使用独立的 `pr/<编号>/` 前缀与并发组，避免不同 PR 的验证互相取消。上传与公开访问校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。原协议相对字体 URL、日程数据 URL 和服务器部署路径不变。
 
 ### Workflow
 
