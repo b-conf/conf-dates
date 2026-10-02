@@ -24,7 +24,7 @@ yarn compile
 yarn dev
 ```
 
-先生成初始 JS，再同时运行 Calcit watch 和 Vite；任一进程退出时停止另一进程。
+先生成初始 JS，再启动 Vite。需要修改 Calcit 代码时，在另一个终端运行 `yarn watch`，不额外引入进程管理依赖。
 
 ### Build page
 
@@ -33,7 +33,7 @@ VITE_BASE_URL=https://cos-sh.tiye.me/b-conf/conf-dates/ yarn build
 node --test test/runtime.test.mjs
 ```
 
-构建包含一次 Calcit 编译。未设置 `VITE_BASE_URL` 时，本地构建仍使用相对路径。每次 PR 上传使用独立的 `pr/<编号>/<run>/<attempt>/` 前缀，并发组按 PR 隔离。上传与公开访问校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。CI 保留严格入口/公共合同、现有质量基线和日程业务测试，不重复执行迁移诊断。原协议相对字体 URL、日程数据 URL 和服务器部署路径不变。
+构建包含一次 Calcit 编译。未设置 `VITE_BASE_URL` 时，本地构建仍使用相对路径。每次 PR 上传使用独立的 `pr/<编号>/<run>/<attempt>/` 前缀，并发组按 PR 隔离。上传与公开访问校验使用 COS Action v1.2.0 内置 verify 配置，不添加额外 CDN 校验脚本。生产部署排队执行，并在上传前检查提交仍为当前 main，跳过已过期的构建。CI 保留严格入口/公共合同、现有质量基线和日程业务测试，不重复执行迁移诊断。原协议相对字体 URL、日程数据 URL 和服务器部署路径不变。
 
 ### Workflow
 
