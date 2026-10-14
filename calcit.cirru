@@ -385,6 +385,7 @@
               and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
               js/console.log |Dispatch: op
             reset! *reel $ reel-updater updater @*reel op
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -395,25 +396,32 @@
             let
                 resource $ js-await $ js/fetch schedule-url
                 json-data $ js-await $ .!json resource
-                data $ -> json-data to-calcit-data
-                  map $ fn (obj)
-                    -> obj $ filter-map-kv retag-entry
-                  map $ fn (m)
-                    app.types/Conf :name
-                      option:unwrap-or (get m :name) |
-                      , :date
-                        option:unwrap-or (get m :date) |
-                        , :days
-                          number-or-zero $ option:unwrap-or (get m :days) 0
-                          , :city
-                            option:unwrap-or (get m :city) |
-                            , :host
-                              option:unwrap-or (get m :host) |
-                              , :url
-                                option:unwrap-or (get m :url) |
-                                , :code
-                                  option:unwrap-or (get m :code) |
-                                  , :today? false :far? false
+                data $ let
+                    converted $ to-calcit-data json-data
+                  if (list? converted)
+                    map converted $ fn (m)
+                      hint-fn $ {}
+                        :args $ [] 'Dynamic
+                        :return 'app.types/Conf
+                        :features $ #{} :js-ffi
+                      if (map? m)
+                        app.types/Conf :name
+                          contract/expect-string |Conf.name $ option:unwrap-or (get m |name) |
+                          , :date
+                            contract/expect-string |Conf.date $ option:unwrap-or (get m |date) |
+                            , :days
+                              number-or-zero $ option:unwrap-or (get m |days) 0
+                              , :city
+                                contract/expect-string |Conf.city $ option:unwrap-or (get m |city) |
+                                , :host
+                                  contract/expect-string |Conf.host $ option:unwrap-or (get m |host) |
+                                  , :url
+                                    contract/expect-string |Conf.url $ option:unwrap-or (get m |url) |
+                                    , :code
+                                      contract/expect-string |Conf.code $ option:unwrap-or (get m |code) |
+                                      , :today? false :far? false
+                        raise "|Expected conference object"
+                    raise "|Expected conference list"
               dispatch! $ :: :load-confs data
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -428,15 +436,16 @@
             listen-devtools! |k dispatch!
             load-json-data!
             println "|App started."
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
-            option:unwrap $ query-selector |.app
+            option:unwrap $ respo-browser/query-selector |.app
           :examples $ []
-          :schema $ :: 'js-ffi.browser/DomElementHost
+          :schema $ :: 'respo.dom/DomElement
         'number-or-zero $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn number-or-zero (value)
             if (number? value) value 0
@@ -488,6 +497,8 @@
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
             js-ffi.browser :refer $ query-selector
+            js-ffi.contract :as contract
+            respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
       :defs $ {} $ 'store
         %{} 'CodeEntry (:doc |)
