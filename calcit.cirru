@@ -195,7 +195,7 @@
                 states $ :states store
                 schedule $ :confs store
               [] (effect-scroll schedule)
-                if (some? schedule)
+                if (non-nil? schedule)
                   div
                     {} $ :style $ merge ui/global
                     , comp-header
@@ -291,7 +291,7 @@
             :features $ #{} :js-ffi
         'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-scroll (schedule) (action el at?)
-            when (some? schedule)
+            when (non-nil? schedule)
               js/setTimeout
                 fn () $ match (query-selector |#today)
                   (:some target)
@@ -424,7 +424,7 @@
             if config/dev? $ load-console-formatter!
             println "|Running mode:" $ if config/dev? |dev |release
             render-app!
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
+            add-watch! *reel :changes $ fn (reel prev) (render-app!)
             listen-devtools! |k dispatch!
             load-json-data!
             println "|App started."
@@ -445,9 +445,9 @@
             :args $ [] 'Dynamic
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
-            if (some? build-errors) (tip! |error build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
-                add-watch *reel :changes $ fn (reel prev) (render-app!)
+            if (non-nil? build-errors) (tip! |error build-errors)
+              do (remove-watch! *reel :changes) (clear-cache!)
+                add-watch! *reel :changes $ fn (reel prev) (render-app!)
                 reset! *reel $ assert-type (refresh-reel @*reel schema/store updater) 'app.types/Reel
                 tip! |ok~ |Ok
                 load-json-data!

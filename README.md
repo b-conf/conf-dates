@@ -9,7 +9,10 @@
 
 ### Dev
 
-使用 Calcit 0.27.0 与 Yarn 4.18.0。项目只维护 `calcit.cirru` / `deps.cirru`，不恢复 `compact.cirru` / `package.cirru`；CI 检查旧文件不存在。
+使用者影响：当前迁移候选将 Calcit CLI/runtime 同步到正式 `0.29.3`，Yarn 仍为 `4.18.0`。
+Reel `0.6.35` 固定旧 Respo/UI 图，因此候选使用相互一致的正式 UI `0.7.35` / Respo `0.16.116`，
+不混入尚未对齐 Reel 的新模块，也不放宽 Caps。候选尚未完成严格类型、日程数据和浏览器验收，不能部署或视为迁移完成。
+项目只维护 `calcit.cirru` / `deps.cirru`，不恢复 `compact.cirru` / `package.cirru`；CI 检查旧文件不存在。
 
 ```bash
 caps --strict --ci
