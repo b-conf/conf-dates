@@ -469,15 +469,6 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-        'retag-entry $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn retag-entry (key value)
-            assert-type
-              :: :keep (turn-tag key) value
-              :: 'calcit.core/MapEntryDecision 'Tag 'Dynamic
-          :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'String 'Dynamic
-            :return $ :: 'calcit.core/MapEntryDecision 'Tag 'Dynamic
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
@@ -527,13 +518,19 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor s) (update-states store cursor s)
-              (:load-confs data) (assoc store :confs data)
-              (:hydrate-storage data) data
+              (:states cursor s)
+                if (list? cursor)
+                  let
+                      next-states $ update-state-tree (:states store) cursor s
+                    if (map? next-states) (assoc store :states next-states) (raise "|Invalid state tree")
+                  raise "|Expected state cursor list"
+              (:load-confs data)
+                assoc store :confs $ decode-map-as data $ :: 'List 'app.types/Conf
+              (:hydrate-storage data) (decode-map-as data 'app.types/Store)
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.types/Store)
             :args $ [] 'app.types/Store 'Enum 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ respo.cursor :refer $ update-states
+          :require $ respo.cursor :refer $ update-state-tree
