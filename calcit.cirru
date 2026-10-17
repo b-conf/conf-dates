@@ -191,7 +191,7 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ assert-type (reel.schema/read-field reel :store) (quote app.types/Store)
+                store $ app.types/read-store $ reel.schema/read-field reel :store
                 states $ :states store
                 schedule $ :confs store
               [] (effect-scroll schedule)
@@ -296,13 +296,13 @@
                 fn () $ match (query-selector |#today)
                   (:some target)
                     let
-                        scroll-target $ unsafe-coerce target ScrollElementHost
+                        scroll-target $ js-cast target ScrollElementHost
                       .scroll-into-view! scroll-target
                   (:none) &unit
                 , 300
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
+            :args $ [] $ :: 'List 'app.types/Conf
             :features $ #{} :js-ffi
         'inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline (path)
@@ -320,7 +320,7 @@
         'parse-date $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-date (text)
             let
-                date-time $ unsafe-coerce DateTime DateTimeFactoryHost
+                date-time $ js-cast dateTimeFactory DateTimeFactoryHost
               .from-iso date-time text
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.comp.container/DateTimeHost)
@@ -335,7 +335,7 @@
         'today-string $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn today-string ()
             let
-                date-time $ unsafe-coerce DateTime DateTimeFactoryHost
+                date-time $ js-cast dateTimeFactory DateTimeFactoryHost
                 now $ .local date-time
               .to-format now |yyyy-MM-dd
           :examples $ []
@@ -345,14 +345,14 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.core :as ui)
-            respo.util.format :refer $ [] hsl
-            respo.core :refer $ [] defcomp defeffect <> >> div button textarea span input a list->
-            respo.comp.space :refer $ [] =<
-            reel.comp.reel :refer $ [] comp-reel
-            app.config :refer $ [] dev?
-            app.types :refer $ [] Conf
-            |luxon :refer $ [] DateTime
-            js-ffi.browser :refer $ [] query-selector
+            respo.util.format :refer $ hsl
+            respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
+            respo.comp.space :refer $ =<
+            reel.comp.reel :refer $ comp-reel
+            app.config :refer $ dev?
+            app.types :refer $ Conf
+            |../entry/luxon.mjs :refer $ dateTimeFactory
+            js-ffi.browser :refer $ query-selector
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -380,15 +380,19 @@
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op)
-            when
-              and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
-              js/console.log |Dispatch: op
-            reset! *reel $ reel-updater updater @*reel op
-            , &unit
+          :code $ quote $ defn dispatch! (event)
+            if (enum? event)
+              let
+                  op event
+                when
+                  and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
+                  js/console.log |Dispatch: op
+                reset! *reel $ reel-updater reel-updater-adapter @*reel op
+                , &unit
+              raise "|Expected a Respo event tuple"
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
+            :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-json-data! ()
@@ -457,9 +461,10 @@
             if (non-nil? build-errors) (tip! |error build-errors)
               do (remove-watch! *reel :changes) (clear-cache!)
                 add-watch! *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ assert-type (refresh-reel @*reel schema/store updater) (:: 'Map 'Tag 'Dynamic)
+                reset! *reel $ decode-map-as (refresh-reel @*reel schema/store reel-updater-adapter) (:: 'Map 'Tag 'Dynamic)
                 tip! |ok~ |Ok
                 load-json-data!
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -478,7 +483,7 @@
           :require
             respo.core :refer $ render! clear-cache!
             app.comp.container :refer $ comp-container
-            app.updater :refer $ updater
+            app.updater :refer $ updater reel-updater-adapter
             app.schema :as schema
             app.types :refer $ Conf
             reel.util :refer $ listen-devtools!
@@ -511,11 +516,28 @@
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ :: 'StructDef
+        'read-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn read-store (value)
+            if (struct? value)
+              struct-match value (Store checked checked)
+                _ other $ raise "|Expected Store"
+              decode-map-as value 'Store
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
+            :args $ [] 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
-      :defs $ {} $ 'updater
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'reel-updater-adapter $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn reel-updater-adapter (store op op-id op-time)
+            if (enum? op)
+              updater (app.types/read-store store) op (decode-map-as op-id 'String) (decode-map-as op-time 'Number)
+              raise "|Expected an event tuple from Reel"
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
+            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
+        'updater $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
               (:states cursor s)
