@@ -426,7 +426,7 @@
                                       , :today? false :far? false
                         raise "|Expected conference object"
                     raise "|Expected conference list"
-              dispatch! $ :: :load-confs data
+              dispatch! $ :: :load-confs $ app.types/ConfBatch :items data
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -511,8 +511,14 @@
           :code $ quote $ defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
           :schema $ :: 'StructDef
+        'ConfBatch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ConfBatch
+            :items $ :: 'List 'app.types/Conf
+          :examples $ []
+          :schema $ :: 'StructDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:states 'Map)
+          :code $ quote $ defstruct Store
+            :states $ :: 'Map 'Dynamic 'Dynamic
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ :: 'StructDef
@@ -547,8 +553,12 @@
                     if (map? next-states) (assoc store :states next-states) (raise "|Invalid state tree")
                   raise "|Expected state cursor list"
               (:load-confs data)
-                assoc store :confs $ decode-map-as data $ :: 'List 'app.types/Conf
-              (:hydrate-storage data) (decode-map-as data 'app.types/Store)
+                assoc store :confs $ if (struct? data)
+                  struct-match data
+                    app.types/ConfBatch batch $ :items batch
+                    _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
+                  raise "|Expected ConfBatch; reload after upgrading the event format"
+              (:hydrate-storage data) (app.types/read-store data)
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.types/Store)

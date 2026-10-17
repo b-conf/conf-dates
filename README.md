@@ -11,15 +11,17 @@
 
 使用者影响：当前本地迁移候选将 Calcit CLI/runtime 配对到已发布的 `0.30.1-alpha.4`（预发布，不是正式 0.30.1），Yarn 仍为 `4.18.0`。
 依赖使用正式 Reel `0.6.39`、UI `0.7.41`、Respo `0.16.122`、js-ffi `0.2.3`，不使用模块 hash/alpha 引用，不放宽 Caps 或增加 npm 年龄例外。
-日程 URL、年份参数、Luxon 日期语义、300ms 滚动延时和生产部署路径不变。候选尚未完成原业务回归、质量门禁和浏览器验收，未发 PR 或部署，不能视为迁移完成。
+日程 URL、年份参数、Luxon 日期语义、300ms 滚动延时和生产部署路径不变。内部 `:load-confs` 载荷升级为 `ConfBatch(items: List<Conf>)`；升级后需要完整刷新页面，旧裸列表事件不能热重放。此变化不改变 HTTP JSON 或持久化格式，也不自动清空旧记录。候选质量基线迁移仍待审阅，未发 PR 或部署，不能视为迁移完成。
 项目只维护 `calcit.cirru` / `deps.cirru`，不恢复 `compact.cirru` / `package.cirru`；CI 检查旧文件不存在。
 
 Store 的开放读取用 `struct-match` 验证既有 nominal 值并保留原值，Map 输入才 decode；Reel 的开放 updater 回调有实际受检适配器，不把窄业务函数冒充开放函数。
 Luxon 的 callable `DateTime` 导出由两方法委托对象适配后做宿主形状检查，保留静态 receiver 和原返回对象；滚动宿主也做真实检查。项目 unsafe 从 4 降至 0，不新增编译器规则或 checker。
 
-当前实际结果：222/222 全定义、39/39 公开定义、完整 strict、immutable 安装和生产构建通过，原 9 项回归 8 通过 / 1 失败；测试和质量基线均未改动。
-剩余失败是 Reel 开放事件中已有 `List<Conf>` 被重复 Map decoder 拒绝；原测试还要求保留列表身份，不能用复制/序列化或强转绕过。
-此边界已补充到 [Calcit #2154](https://github.com/calcit-lang/calcit/issues/2154#issuecomment-6239462112)，callable 宿主需求补充到 [#2153](https://github.com/calcit-lang/calcit/issues/2153#issuecomment-6239461849)。
+在 loader 仍有具体类型时构造 `ConfBatch`，穿过 Reel 后用现有 `struct-match` 取回同一列表，避免重复解码已经 nominal 的 Conf。Store 的混合状态 key/value 如实声明为 `Map<Dynamic,Dynamic>`，不把开放状态伪装成 Tag-only 或同构数据。
+当前实际结果：223/223 全定义、40/40 公开定义、完整 strict、immutable 安装和生产构建通过，原 9 项业务回归全部通过。测试仅调整事件载荷构造，与真实 loader 一致；列表/状态身份、日期、卡片和滚动的原断言全部保留，没有新增测试框架或永久验证脚本。
+实际 Reel 更新和 refresh 回放保留原列表引用；混合状态路径和 nominal Store 恢复通过。浏览器以合成 JSON 验证真实 loader→ConfBatch→Reel→DOM、年份 URL、闰日、地点/链接和 reload! 回放，控制台 warning/error 为空。未读取真实日程文件或执行生产上传，不宣称完整真实数据验收。
+已向 [Calcit #2154](https://github.com/calcit-lang/calcit/issues/2154#issuecomment-6239622308) 更正消费者状态：这个具体问题用现有模型解决，不依赖新增 compiler proof/fix。callable 宿主需求补充到 [#2153](https://github.com/calcit-lang/calcit/issues/2153#issuecomment-6239461849)。
+正式 Respo `list->` 仍要求 `List<List<Dynamic>>`，此处保留兼容返回合同，不假装 `ChildPair` 已能直接传入；后续公共类型支持反馈到 [Respo #194](https://github.com/Respo/respo.calcit/issues/194#issuecomment-6239622783)。
 质量基线仍失败（schemaDynamic 8/5、typeNotFull 7/5、unresolved 13/10；unsafe 0/4），未放宽预算。原 COS 公开域名证书问题另行等待修复，不重复上传或绕过 TLS。
 
 ```bash
