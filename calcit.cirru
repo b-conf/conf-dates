@@ -191,7 +191,7 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ app.types/read-store $ reel.schema/read-field reel :store
+                store $ :store reel
                 states $ :states store
                 schedule $ :confs store
               [] (effect-scroll schedule)
@@ -211,7 +211,7 @@
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
                             assert-type (Option :none) (:: 'Option 'app.types/Conf)
-                      when dev? $ comp-reel (>> states :reel) reel $ {}
+                      when dev? $ comp-reel (>> states :reel) (typed-compat/view-data reel) ({})
                   div
                     {} $ :style $ merge ui/center
                       {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
@@ -220,8 +220,7 @@
                     <> |Loading...
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+            :args $ [] $ :: 'reel.typed/State 'Enum 'app.types/Store
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -353,6 +352,7 @@
             app.types :refer $ Conf
             |../entry/luxon.mjs :refer $ dateTimeFactory
             js-ffi.browser :refer $ query-selector
+            reel.typed-compat :as typed-compat
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -375,10 +375,9 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defref *reel
-            -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum 'app.types/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (event)
             if (enum? event)
@@ -387,7 +386,11 @@
                 when
                   and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
                   js/console.log |Dispatch: op
-                reset! *reel $ reel-updater reel-updater-adapter @*reel op
+                match (typed/decode-control op)
+                  (:some control)
+                    reset! *reel $ typed/apply-control updater @*reel control
+                  (:none)
+                    reset! *reel $ typed/record-op updater @*reel op (shared/random-uuid) (shared/now-ms)
                 , &unit
               raise "|Expected a Respo event tuple"
           :examples $ []
@@ -461,7 +464,7 @@
             if (non-nil? build-errors) (tip! |error build-errors)
               do (remove-watch! *reel :changes) (clear-cache!)
                 add-watch! *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ decode-map-as (refresh-reel @*reel schema/store reel-updater-adapter) (:: 'Map 'Tag 'Dynamic)
+                reset! *reel $ typed/refresh updater @*reel schema/store
                 tip! |ok~ |Ok
                 load-json-data!
             , &unit
@@ -483,18 +486,18 @@
           :require
             respo.core :refer $ render! clear-cache!
             app.comp.container :refer $ comp-container
-            app.updater :refer $ updater reel-updater-adapter
+            app.updater :refer $ updater
             app.schema :as schema
             app.types :refer $ Conf
             reel.util :refer $ listen-devtools!
-            reel.core :refer $ reel-updater refresh-reel
-            reel.schema :as reel-schema
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
             js-ffi.browser :refer $ query-selector
             js-ffi.contract :as contract
             respo.ffi.browser :as respo-browser
+            reel.typed :as typed
+            js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
       :defs $ {} $ 'store
         %{} 'CodeEntry (:doc |)
@@ -534,16 +537,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
-      :defs $ {}
-        'reel-updater-adapter $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn reel-updater-adapter (store op op-id op-time)
-            if (enum? op)
-              updater (app.types/read-store store) op (decode-map-as op-id 'String) (decode-map-as op-time 'Number)
-              raise "|Expected an event tuple from Reel"
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
-        'updater $ %{} 'CodeEntry (:doc |)
+      :defs $ {} $ 'updater
+        %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
               (:states cursor s)

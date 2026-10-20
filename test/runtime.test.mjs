@@ -4,6 +4,7 @@ import * as c from '../js-out/calcit.core.mjs';
 import { Conf, ConfBatch, Store } from '../js-out/app.types.mjs';
 import { store } from '../js-out/app.schema.mjs';
 import { updater } from '../js-out/app.updater.mjs';
+import { new_reel } from '../js-out/reel.typed.mjs';
 import {
   comp_container, comp_conf_info, comp_card, arrange_list, effect_scroll,
   parse_date, date_valid_$q_, date_to_format, date_to_iso,
@@ -22,7 +23,7 @@ const conf = (extra = {}) => {
 
 test('initial nominal Store renders the real schedule header and Today marker', () => {
   assert.equal(c.option_$o_unwrap(c.struct_definition(store)), Store);
-  const html = make_string(comp_container(c._$n__$M_(t.store, store)));
+  const html = make_string(comp_container(new_reel(store)));
   assert.ok(html.includes('中文技术活动日程'));
   assert.ok(html.includes('id="today"'));
   assert.ok(html.includes('https://github.com/b-conf/chinese-tech-conf-schedule'));
@@ -37,7 +38,7 @@ test('loading typed conferences preserves Store identity and cursor state', () =
   assert.equal(read(updated, t.confs), items);
   assert.equal(read(updated, t.states), read(store, t.states));
   assert.equal(c.count(read(store, t.confs)), 0);
-  const html = make_string(comp_container(c._$n__$M_(t.store, updated)));
+  const html = make_string(comp_container(new_reel(updated)));
   assert.ok(html.includes('id="today"'));
   assert.ok(html.includes('Test Conference'));
 });
