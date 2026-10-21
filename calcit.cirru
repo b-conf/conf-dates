@@ -191,11 +191,11 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
-                store $ assert-type (reel.schema/read-field reel :store) (quote app.types/Store)
+                store $ :store reel
                 states $ :states store
                 schedule $ :confs store
               [] (effect-scroll schedule)
-                if (some? schedule)
+                if (non-nil? schedule)
                   div
                     {} $ :style $ merge ui/global
                     , comp-header
@@ -211,7 +211,7 @@
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
                             assert-type (Option :none) (:: 'Option 'app.types/Conf)
-                      when dev? $ comp-reel (>> states :reel) reel $ {}
+                      when dev? $ comp-reel (>> states :reel) (typed-compat/view-data reel) ({})
                   div
                     {} $ :style $ merge ui/center
                       {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
@@ -220,8 +220,7 @@
                     <> |Loading...
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'app.types/Reel
-            :features $ #{} :js-ffi
+            :args $ [] $ :: 'reel.typed/State 'Enum 'app.types/Store
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -291,18 +290,18 @@
             :features $ #{} :js-ffi
         'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-scroll (schedule) (action el at?)
-            when (some? schedule)
+            when (non-nil? schedule)
               js/setTimeout
                 fn () $ match (query-selector |#today)
                   (:some target)
                     let
-                        scroll-target $ unsafe-coerce target ScrollElementHost
+                        scroll-target $ js-cast target ScrollElementHost
                       .scroll-into-view! scroll-target
                   (:none) &unit
                 , 300
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
+            :args $ [] $ :: 'List 'app.types/Conf
             :features $ #{} :js-ffi
         'inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline (path)
@@ -320,7 +319,7 @@
         'parse-date $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-date (text)
             let
-                date-time $ unsafe-coerce DateTime DateTimeFactoryHost
+                date-time $ js-cast dateTimeFactory DateTimeFactoryHost
               .from-iso date-time text
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.comp.container/DateTimeHost)
@@ -335,7 +334,7 @@
         'today-string $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn today-string ()
             let
-                date-time $ unsafe-coerce DateTime DateTimeFactoryHost
+                date-time $ js-cast dateTimeFactory DateTimeFactoryHost
                 now $ .local date-time
               .to-format now |yyyy-MM-dd
           :examples $ []
@@ -345,14 +344,15 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.core :as ui)
-            respo.util.format :refer $ [] hsl
-            respo.core :refer $ [] defcomp defeffect <> >> div button textarea span input a list->
-            respo.comp.space :refer $ [] =<
-            reel.comp.reel :refer $ [] comp-reel
-            app.config :refer $ [] dev?
-            app.types :refer $ [] Conf
-            |luxon :refer $ [] DateTime
-            js-ffi.browser :refer $ [] query-selector
+            respo.util.format :refer $ hsl
+            respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
+            respo.comp.space :refer $ =<
+            reel.comp.reel :refer $ comp-reel
+            app.config :refer $ dev?
+            app.types :refer $ Conf
+            |../entry/luxon.mjs :refer $ dateTimeFactory
+            js-ffi.browser :refer $ query-selector
+            reel.typed-compat :as typed-compat
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -375,19 +375,27 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            -> reel-schema/reel (assoc :base schema/store) (assoc :store schema/store)
+          :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref 'app.types/Reel
+          :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum 'app.types/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op)
-            when
-              and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
-              js/console.log |Dispatch: op
-            reset! *reel $ reel-updater updater @*reel op
+          :code $ quote $ defn dispatch! (event)
+            if (enum? event)
+              let
+                  op event
+                when
+                  and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
+                  js/console.log |Dispatch: op
+                match (typed/decode-control op)
+                  (:some control)
+                    reset! *reel $ typed/apply-control updater @*reel control
+                  (:none)
+                    reset! *reel $ typed/record-op updater @*reel op (shared/random-uuid) (shared/now-ms)
+                , &unit
+              raise "|Expected a Respo event tuple"
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
+            :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-json-data! ()
@@ -395,26 +403,33 @@
             let
                 resource $ js-await $ js/fetch schedule-url
                 json-data $ js-await $ .!json resource
-                data $ -> json-data to-calcit-data
-                  map $ fn (obj)
-                    -> obj $ filter-map-kv retag-entry
-                  map $ fn (m)
-                    app.types/Conf :name
-                      option:unwrap-or (get m :name) |
-                      , :date
-                        option:unwrap-or (get m :date) |
-                        , :days
-                          number-or-zero $ option:unwrap-or (get m :days) 0
-                          , :city
-                            option:unwrap-or (get m :city) |
-                            , :host
-                              option:unwrap-or (get m :host) |
-                              , :url
-                                option:unwrap-or (get m :url) |
-                                , :code
-                                  option:unwrap-or (get m :code) |
-                                  , :today? false :far? false
-              dispatch! $ :: :load-confs data
+                data $ let
+                    converted $ to-calcit-data json-data
+                  if (list? converted)
+                    map converted $ fn (m)
+                      hint-fn $ {}
+                        :args $ [] 'Dynamic
+                        :return 'app.types/Conf
+                        :features $ #{} :js-ffi
+                      if (map? m)
+                        app.types/Conf :name
+                          contract/expect-string |Conf.name $ option:unwrap-or (get m |name) |
+                          , :date
+                            contract/expect-string |Conf.date $ option:unwrap-or (get m |date) |
+                            , :days
+                              number-or-zero $ option:unwrap-or (get m |days) 0
+                              , :city
+                                contract/expect-string |Conf.city $ option:unwrap-or (get m |city) |
+                                , :host
+                                  contract/expect-string |Conf.host $ option:unwrap-or (get m |host) |
+                                  , :url
+                                    contract/expect-string |Conf.url $ option:unwrap-or (get m |url) |
+                                    , :code
+                                      contract/expect-string |Conf.code $ option:unwrap-or (get m |code) |
+                                      , :today? false :far? false
+                        raise "|Expected conference object"
+                    raise "|Expected conference list"
+              dispatch! $ :: :load-confs $ app.types/ConfBatch :items data
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -424,19 +439,20 @@
             if config/dev? $ load-console-formatter!
             println "|Running mode:" $ if config/dev? |dev |release
             render-app!
-            add-watch *reel :changes $ fn (reel prev) (render-app!)
+            add-watch! *reel :changes $ fn (reel prev) (render-app!)
             listen-devtools! |k dispatch!
             load-json-data!
             println "|App started."
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
-            option:unwrap $ query-selector |.app
+            option:unwrap $ respo-browser/query-selector |.app
           :examples $ []
-          :schema $ :: 'js-ffi.browser/DomElementHost
+          :schema $ :: 'respo.dom/DomElement
         'number-or-zero $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn number-or-zero (value)
             if (number? value) value 0
@@ -445,12 +461,13 @@
             :args $ [] 'Dynamic
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
-            if (some? build-errors) (tip! |error build-errors)
-              do (remove-watch *reel :changes) (clear-cache!)
-                add-watch *reel :changes $ fn (reel prev) (render-app!)
-                reset! *reel $ assert-type (refresh-reel @*reel schema/store updater) 'app.types/Reel
+            if (non-nil? build-errors) (tip! |error build-errors)
+              do (remove-watch! *reel :changes) (clear-cache!)
+                add-watch! *reel :changes $ fn (reel prev) (render-app!)
+                reset! *reel $ typed/refresh updater @*reel schema/store
                 tip! |ok~ |Ok
                 load-json-data!
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -460,15 +477,6 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-        'retag-entry $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn retag-entry (key value)
-            assert-type
-              :: :keep (turn-tag key) value
-              :: 'calcit.core/MapEntryDecision 'Tag 'Dynamic
-          :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'String 'Dynamic
-            :return $ :: 'calcit.core/MapEntryDecision 'Tag 'Dynamic
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
@@ -482,12 +490,14 @@
             app.schema :as schema
             app.types :refer $ Conf
             reel.util :refer $ listen-devtools!
-            reel.core :refer $ reel-updater refresh-reel
-            reel.schema :as reel-schema
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
             js-ffi.browser :refer $ query-selector
+            js-ffi.contract :as contract
+            respo.ffi.browser :as respo-browser
+            reel.typed :as typed
+            js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
       :defs $ {} $ 'store
         %{} 'CodeEntry (:doc |)
@@ -504,15 +514,26 @@
           :code $ quote $ defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
           :schema $ :: 'StructDef
-        'Reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def Reel &unit
+        'ConfBatch $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ConfBatch
+            :items $ :: 'List 'app.types/Conf
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'StructDef
         'Store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Store (:states 'Map)
+          :code $ quote $ defstruct Store
+            :states $ :: 'Map 'Dynamic 'Dynamic
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ :: 'StructDef
+        'read-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn read-store (value)
+            if (struct? value)
+              struct-match value (Store checked checked)
+                _ other $ raise "|Expected Store"
+              decode-map-as value 'Store
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
+            :args $ [] 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
@@ -520,13 +541,23 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor s) (update-states store cursor s)
-              (:load-confs data) (assoc store :confs data)
-              (:hydrate-storage data) data
+              (:states cursor s)
+                if (list? cursor)
+                  let
+                      next-states $ update-state-tree (:states store) cursor s
+                    if (map? next-states) (assoc store :states next-states) (raise "|Invalid state tree")
+                  raise "|Expected state cursor list"
+              (:load-confs data)
+                assoc store :confs $ if (struct? data)
+                  struct-match data
+                    app.types/ConfBatch batch $ :items batch
+                    _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
+                  raise "|Expected ConfBatch; reload after upgrading the event format"
+              (:hydrate-storage data) (app.types/read-store data)
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.types/Store)
             :args $ [] 'app.types/Store 'Enum 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ respo.cursor :refer $ update-states
+          :require $ respo.cursor :refer $ update-state-tree
