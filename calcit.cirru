@@ -64,7 +64,7 @@
               map-indexed acc $ fn (idx x) ([] idx x)
               let
                   conf $ assert-type
-                    option:unwrap $ first confs
+                    .unwrap $ first confs
                     , 'app.types/Conf
                 recur
                   conj acc $ comp-card conf previous-conf $ assert-type
@@ -79,13 +79,13 @@
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
             let
-                prev-conf-value $ option:unwrap-or prev-conf conf
-                next-conf-value $ option:unwrap-or next-conf conf
+                prev-conf-value $ .unwrap-or prev-conf conf
+                next-conf-value $ .unwrap-or next-conf conf
                 date $ start-of-day $ parse-date conf.:date
                 prev-date $ start-of-day $ parse-date prev-conf-value.:date
                 next-date $ start-of-day $ parse-date next-conf-value.:date
                 overlap-with-prev? $ if
-                  or (option:none? prev-conf) (prev-conf-value.:today?) (conf.:today?)
+                  or (.none? prev-conf) (prev-conf-value.:today?) (conf.:today?)
                   , false $ let
                       end-date $ date-plus-days prev-date $ dec
                         math-ceil $ prev-conf-value.:days
@@ -96,7 +96,7 @@
                         , 0
                       , false
                 overlap-with-next? $ if
-                  or (option:none? next-conf) conf.:today? $ next-conf-value.:today?
+                  or (.none? next-conf) conf.:today? $ next-conf-value.:today?
                   , false $ let
                       end-date $ date-plus-days date $ dec (math-ceil conf.:days)
                     if
@@ -115,7 +115,7 @@
                       :padding "|0 16px"
                       :border-top $ str "|2px dashed " $ hsl 0 0 100
                       :text-align :center
-                  if (option:none? prev-conf)
+                  if (.none? prev-conf)
                     div $ {}
                     let
                         prev-end-date $ date-plus-days prev-date $ dec
@@ -123,7 +123,7 @@
                         days $ date-diff-days date prev-end-date
                       when (> days 0)
                         div
-                          {} $ :style $ merge ui/row-middle
+                          {} $ :style $ .merge ui/row-middle
                             {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "|0 8px") (:margin "|8px 20px")
                               :border-left $ str "|4px solid " $ hsl 240 80 86
                               :height $ str
@@ -137,7 +137,7 @@
         'comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-conf-info (conf overlapped?)
             div
-              {} $ :style $ merge ui/column
+              {} $ :style $ .merge ui/column
                 assert-type
                   {} (:padding "|12px 16px") (:border-radius |8px)
                     :background-color $ hsl 0 0 100
@@ -197,7 +197,7 @@
               [] (effect-scroll schedule)
                 if (non-nil? schedule)
                   div
-                    {} $ :style $ merge ui/global
+                    {} $ :style $ .merge ui/global
                     , comp-header
                       div
                         {} $ :style $ {} (:padding "|100px 16px 240px")
@@ -213,7 +213,7 @@
                             assert-type (Option :none) (:: 'Option 'app.types/Conf)
                       when dev? $ comp-reel (>> states :reel) (typed-compat/view-data reel) ({})
                   div
-                    {} $ :style $ merge ui/center
+                    {} $ :style $ .merge ui/center
                       {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
                         :color $ hsl 0 0 80
                         :font-size 80
@@ -224,10 +224,10 @@
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
-              {} $ :style $ merge ui/row-parted
+              {} $ :style $ .merge ui/row-parted
                 {} $ :padding "|12px 12px"
               div
-                {} $ :style $ merge
+                {} $ :style $ .merge
                   {} $ :font-size 20
                 <> "|中文技术活动日程"
               div ({})
@@ -247,7 +247,7 @@
           :code $ quote $ def comp-today
             div
               {} (:id |today)
-                :style $ merge ui/center $ {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius |24px)
+                :style $ .merge ui/center $ {} (:height 120) (:font-size 32) (:font-family ui/font-fancy) (:font-weight 300) (:border-radius |24px)
                   :color $ hsl 0 0 100
                   :box-shadow $ str "|0 0 4px " $ hsl 240 80 50 0.2
                   :background-color $ hsl 220 90 76
@@ -357,7 +357,7 @@
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Bool
         'site $ %{} 'CodeEntry (:doc |)
@@ -367,7 +367,7 @@
           :schema $ :: 'Map 'Tag 'String
         'year $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def year
-            option:unwrap-or (get-env |year) |2023
+            .unwrap-or (get-env |year) |2023
           :examples $ []
           :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
@@ -384,7 +384,7 @@
               let
                   op event
                 when
-                  and config/dev? $ not= :states $ option:unwrap-or (nth op 0) :unknown
+                  and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
                   js/console.log |Dispatch: op
                 match (typed/decode-control op)
                   (:some control)
@@ -413,19 +413,19 @@
                         :features $ #{} :js-ffi
                       if (map? m)
                         app.types/Conf :name
-                          contract/expect-string |Conf.name $ option:unwrap-or (get m |name) |
+                          contract/expect-string |Conf.name $ .unwrap-or (get m |name) |
                           , :date
-                            contract/expect-string |Conf.date $ option:unwrap-or (get m |date) |
+                            contract/expect-string |Conf.date $ .unwrap-or (get m |date) |
                             , :days
-                              number-or-zero $ option:unwrap-or (get m |days) 0
+                              number-or-zero $ .unwrap-or (get m |days) 0
                               , :city
-                                contract/expect-string |Conf.city $ option:unwrap-or (get m |city) |
+                                contract/expect-string |Conf.city $ .unwrap-or (get m |city) |
                                 , :host
-                                  contract/expect-string |Conf.host $ option:unwrap-or (get m |host) |
+                                  contract/expect-string |Conf.host $ .unwrap-or (get m |host) |
                                   , :url
-                                    contract/expect-string |Conf.url $ option:unwrap-or (get m |url) |
+                                    contract/expect-string |Conf.url $ .unwrap-or (get m |url) |
                                     , :code
-                                      contract/expect-string |Conf.code $ option:unwrap-or (get m |code) |
+                                      contract/expect-string |Conf.code $ .unwrap-or (get m |code) |
                                       , :today? false :far? false
                         raise "|Expected conference object"
                     raise "|Expected conference list"
@@ -450,7 +450,7 @@
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
-            option:unwrap $ respo-browser/query-selector |.app
+            .unwrap $ respo-browser/query-selector |.app
           :examples $ []
           :schema $ :: 'respo.dom/DomElement
         'number-or-zero $ %{} 'CodeEntry (:doc |)

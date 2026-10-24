@@ -10,7 +10,8 @@
 ### Dev
 
 使用者影响：迁移候选将 Calcit CLI/runtime 配对到正式 `0.30.1`，Yarn 仍为 `4.18.0`。正式配对的完整验收在 Linux CI 中执行；本地先前 alpha 配对结果不作为正式版验收。
-依赖使用正式 Reel `0.6.39`、UI `0.7.41`、Respo `0.16.122`、js-ffi `0.2.3`，不使用模块 hash/alpha 引用，不放宽 Caps 或增加 npm 年龄例外。
+依赖使用正式 Reel `0.6.42`、UI `0.8.1`、Respo `0.16.126`、js-ffi `0.2.6`，不使用模块 hash/alpha 引用，不放宽 Caps 或增加 npm 年龄例外。升级需重新安装整图并生成 JS。
+公开写法同步 `.unwrap`、`.unwrap-or`、`.none?`、`.merge`，只替换24个调用头；包括单参数和多参数 Map 合并，参数数量、求值顺序、默认值、HUD、类型及质量基线保持不变。
 日程 URL、年份参数、Luxon 日期语义、300ms 滚动延时和生产部署路径不变。内部 `:load-confs` 载荷升级为 `ConfBatch(items: List<Conf>)`；升级后需要完整刷新页面，旧裸列表事件不能热重放。此变化不改变 HTTP JSON 或持久化格式，也不自动清空旧记录。候选质量基线已按授权迁移；本 PR 不合并或部署，候选验收不代表生产部署完成。
 项目只维护 `calcit.cirru` / `deps.cirru`，不恢复 `compact.cirru` / `package.cirru`；CI 检查旧文件不存在。
 
