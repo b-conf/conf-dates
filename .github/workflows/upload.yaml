@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - prepare/conf-dates-public031
   pull_request: {}
 
 permissions:
@@ -47,6 +48,9 @@ jobs:
         yarn install --immutable
         caps verify --toolchain
 
+    - name: Prepare public methods with official Calcit
+      run: node prepare-source.mjs
+
     - name: Validate Calcit snapshot and types
       run: |
         set -euo pipefail
@@ -55,7 +59,7 @@ jobs:
         test ! -e compact.cirru
         test ! -e package.cirru
         calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
+        test "$(git hash-object calcit.cirru)" = "$(cat acceptance/snapshot-blob.txt)"
         calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru fix --workflow strict --verify
         calcit calcit.cirru --check-only \
@@ -91,6 +95,18 @@ jobs:
         set -euo pipefail
         yarn build
         node --test test/runtime.test.mjs
+
+    - name: Preserve official source preparation
+      if: always()
+      uses: actions/upload-artifact@v7.0.0
+      with:
+        name: conf-dates-source-prepared
+        path: |
+          calcit.cirru
+          acceptance
+          dist
+        if-no-files-found: error
+        retention-days: 3
 
     - name: Check current production revision
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'

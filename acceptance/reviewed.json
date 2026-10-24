@@ -1,0 +1,3561 @@
+[
+  {
+    "code": [
+      "def",
+      "calcit-dirname",
+      "|"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.$meta/calcit-dirname",
+    "js_ffi": null,
+    "schema": null,
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "calcit-filename",
+      "|calcit.cirru"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.$meta/calcit-filename",
+    "js_ffi": null,
+    "schema": null,
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "deftrait",
+      "DateDiffHost",
+      [
+        ":days",
+        "'Number"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": {
+      ":backend": {
+        "__edn_tag": "js"
+      },
+      ":kind": {
+        "__edn_tag": "external-object"
+      },
+      ":names": {
+        ":days": "days"
+      },
+      ":target": {
+        "__edn_tag": "browser"
+      }
+    },
+    "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} $ :days |days",
+    "id": "app.comp.container/DateDiffHost",
+    "js_ffi": null,
+    "schema": "'Trait",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "deftrait",
+      "DateTimeFactoryHost",
+      [
+        ".from-iso",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeFactoryHost",
+                "'String"
+              ]
+            ],
+            [
+              ":return",
+              "'app.comp.container/DateTimeHost"
+            ]
+          ]
+        ]
+      ],
+      [
+        ".local",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeFactoryHost"
+              ]
+            ],
+            [
+              ":return",
+              "'app.comp.container/DateTimeHost"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": {
+      ":backend": {
+        "__edn_tag": "js"
+      },
+      ":kind": {
+        "__edn_tag": "external-object"
+      },
+      ":names": {
+        ":from-iso": "fromISO",
+        ":local": "local"
+      },
+      ":target": {
+        "__edn_tag": "browser"
+      }
+    },
+    "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} (:from-iso |fromISO) (:local |local)",
+    "id": "app.comp.container/DateTimeFactoryHost",
+    "js_ffi": null,
+    "schema": "'Trait",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "deftrait",
+      "DateTimeHost",
+      [
+        ":is-valid",
+        "'Bool"
+      ],
+      [
+        ".plus",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeHost",
+                "'JsObject"
+              ]
+            ],
+            [
+              ":return",
+              "'app.comp.container/DateTimeHost"
+            ]
+          ]
+        ]
+      ],
+      [
+        ".diff",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeHost",
+                "'app.comp.container/DateTimeHost",
+                "'String"
+              ]
+            ],
+            [
+              ":return",
+              "'app.comp.container/DateDiffHost"
+            ]
+          ]
+        ]
+      ],
+      [
+        ".start-of",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeHost",
+                "'String"
+              ]
+            ],
+            [
+              ":return",
+              "'app.comp.container/DateTimeHost"
+            ]
+          ]
+        ]
+      ],
+      [
+        ".to-format",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeHost",
+                "'String"
+              ]
+            ],
+            [
+              ":return",
+              "'String"
+            ]
+          ]
+        ]
+      ],
+      [
+        ".to-iso",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/DateTimeHost"
+              ]
+            ],
+            [
+              ":return",
+              "'String"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": {
+      ":backend": {
+        "__edn_tag": "js"
+      },
+      ":kind": {
+        "__edn_tag": "external-object"
+      },
+      ":names": {
+        ":diff": "diff",
+        ":is-valid": "isValid",
+        ":plus": "plus",
+        ":start-of": "startOf",
+        ":to-format": "toFormat",
+        ":to-iso": "toISO"
+      },
+      ":target": {
+        "__edn_tag": "browser"
+      }
+    },
+    "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} (:diff |diff) (:is-valid |isValid) (:plus |plus) (:start-of |startOf) (:to-format |toFormat) (:to-iso |toISO)",
+    "id": "app.comp.container/DateTimeHost",
+    "js_ffi": null,
+    "schema": "'Trait",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "deftrait",
+      "ScrollElementHost",
+      [
+        ".scroll-into-view!",
+        [
+          "::",
+          "'Fn",
+          [
+            "{}",
+            [
+              ":args",
+              [
+                "[]",
+                "'app.comp.container/ScrollElementHost"
+              ]
+            ],
+            [
+              ":return",
+              "'Unit"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": {
+      ":backend": {
+        "__edn_tag": "js"
+      },
+      ":kind": {
+        "__edn_tag": "external-object"
+      },
+      ":names": {
+        ":scroll-into-view!": "scrollIntoView"
+      },
+      ":target": {
+        "__edn_tag": "browser"
+      }
+    },
+    "ffi_edn": "{} (:backend :js) (:kind :external-object) (:target :browser)\n  :names $ {} $ :scroll-into-view! |scrollIntoView",
+    "id": "app.comp.container/ScrollElementHost",
+    "js_ffi": null,
+    "schema": "'Trait",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "arrange-list",
+      [
+        "acc",
+        "confs",
+        "previous-conf"
+      ],
+      [
+        "if",
+        [
+          "empty?",
+          "confs"
+        ],
+        [
+          "map-indexed",
+          "acc",
+          [
+            "fn",
+            [
+              "idx",
+              "x"
+            ],
+            [
+              "[]",
+              "idx",
+              "x"
+            ]
+          ]
+        ],
+        [
+          "let",
+          [
+            [
+              "conf",
+              [
+                "assert-type",
+                [
+                  "option:unwrap",
+                  [
+                    "first",
+                    "confs"
+                  ]
+                ],
+                "'app.types/Conf"
+              ]
+            ]
+          ],
+          [
+            "recur",
+            [
+              "conj",
+              "acc",
+              [
+                "comp-card",
+                "conf",
+                "previous-conf",
+                [
+                  "assert-type",
+                  [
+                    "first",
+                    [
+                      "rest",
+                      "confs"
+                    ]
+                  ],
+                  [
+                    "::",
+                    "'Option",
+                    "'app.types/Conf"
+                  ]
+                ]
+              ]
+            ],
+            [
+              "rest",
+              "confs"
+            ],
+            [
+              "if",
+              "conf.:far?",
+              "previous-conf",
+              [
+                "Option",
+                ":some",
+                "conf"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/arrange-list",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            "'respo.schema/Component"
+          ],
+          [
+            "::",
+            "'List",
+            "'app.types/Conf"
+          ],
+          [
+            "::",
+            "'calcit.core/Option",
+            "'app.types/Conf"
+          ]
+        ]
+      ],
+      [
+        ":return",
+        [
+          "::",
+          "'List",
+          [
+            "::",
+            "'List",
+            "'Dynamic"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defcomp",
+      "comp-card",
+      [
+        "conf",
+        "prev-conf",
+        "next-conf"
+      ],
+      [
+        "let",
+        [
+          [
+            "prev-conf-value",
+            [
+              "option:unwrap-or",
+              "prev-conf",
+              "conf"
+            ]
+          ],
+          [
+            "next-conf-value",
+            [
+              "option:unwrap-or",
+              "next-conf",
+              "conf"
+            ]
+          ],
+          [
+            "date",
+            [
+              "start-of-day",
+              [
+                "parse-date",
+                "conf.:date"
+              ]
+            ]
+          ],
+          [
+            "prev-date",
+            [
+              "start-of-day",
+              [
+                "parse-date",
+                "prev-conf-value.:date"
+              ]
+            ]
+          ],
+          [
+            "next-date",
+            [
+              "start-of-day",
+              [
+                "parse-date",
+                "next-conf-value.:date"
+              ]
+            ]
+          ],
+          [
+            "overlap-with-prev?",
+            [
+              "if",
+              [
+                "or",
+                [
+                  "option:none?",
+                  "prev-conf"
+                ],
+                [
+                  "prev-conf-value.:today?"
+                ],
+                [
+                  "conf.:today?"
+                ]
+              ],
+              "false",
+              [
+                "let",
+                [
+                  [
+                    "end-date",
+                    [
+                      "date-plus-days",
+                      "prev-date",
+                      [
+                        "dec",
+                        [
+                          "math-ceil",
+                          [
+                            "prev-conf-value.:days"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "if",
+                  [
+                    "and",
+                    [
+                      "date-valid?",
+                      "end-date"
+                    ],
+                    [
+                      "date-valid?",
+                      "date"
+                    ]
+                  ],
+                  [
+                    ">=",
+                    [
+                      "&compare",
+                      [
+                        "date-to-iso",
+                        "end-date"
+                      ],
+                      [
+                        "date-to-iso",
+                        "date"
+                      ]
+                    ],
+                    "0"
+                  ],
+                  "false"
+                ]
+              ]
+            ]
+          ],
+          [
+            "overlap-with-next?",
+            [
+              "if",
+              [
+                "or",
+                [
+                  "option:none?",
+                  "next-conf"
+                ],
+                "conf.:today?",
+                [
+                  "next-conf-value.:today?"
+                ]
+              ],
+              "false",
+              [
+                "let",
+                [
+                  [
+                    "end-date",
+                    [
+                      "date-plus-days",
+                      "date",
+                      [
+                        "dec",
+                        [
+                          "math-ceil",
+                          "conf.:days"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "if",
+                  [
+                    "and",
+                    [
+                      "date-valid?",
+                      "end-date"
+                    ],
+                    [
+                      "date-valid?",
+                      "next-date"
+                    ]
+                  ],
+                  [
+                    ">=",
+                    [
+                      "&compare",
+                      [
+                        "date-to-iso",
+                        "end-date"
+                      ],
+                      [
+                        "date-to-iso",
+                        "next-date"
+                      ]
+                    ],
+                    "0"
+                  ],
+                  "false"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}",
+            [
+              ":style",
+              "ui/column"
+            ]
+          ],
+          [
+            "if",
+            "overlap-with-prev?",
+            [
+              "div",
+              [
+                "{}",
+                [
+                  ":style",
+                  [
+                    "{}",
+                    [
+                      ":background-color",
+                      [
+                        "hsl",
+                        "0",
+                        "80",
+                        "70"
+                      ]
+                    ],
+                    [
+                      ":color",
+                      [
+                        "hsl",
+                        "0",
+                        "0",
+                        "100",
+                        "0.7"
+                      ]
+                    ],
+                    [
+                      ":padding",
+                      "|0 16px"
+                    ],
+                    [
+                      ":border-top",
+                      [
+                        "str",
+                        "|2px dashed ",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "100"
+                        ]
+                      ]
+                    ],
+                    [
+                      ":text-align",
+                      ":center"
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "if",
+              [
+                "option:none?",
+                "prev-conf"
+              ],
+              [
+                "div",
+                [
+                  "{}"
+                ]
+              ],
+              [
+                "let",
+                [
+                  [
+                    "prev-end-date",
+                    [
+                      "date-plus-days",
+                      "prev-date",
+                      [
+                        "dec",
+                        [
+                          "math-ceil",
+                          [
+                            "prev-conf-value.:days"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "days",
+                    [
+                      "date-diff-days",
+                      "date",
+                      "prev-end-date"
+                    ]
+                  ]
+                ],
+                [
+                  "when",
+                  [
+                    ">",
+                    "days",
+                    "0"
+                  ],
+                  [
+                    "div",
+                    [
+                      "{}",
+                      [
+                        ":style",
+                        [
+                          "merge",
+                          "ui/row-middle",
+                          [
+                            "{}",
+                            [
+                              ":font-family",
+                              "ui/font-fancy"
+                            ],
+                            [
+                              ":font-size",
+                              "16"
+                            ],
+                            [
+                              ":font-weight",
+                              "300"
+                            ],
+                            [
+                              ":padding",
+                              "|0 8px"
+                            ],
+                            [
+                              ":margin",
+                              "|8px 20px"
+                            ],
+                            [
+                              ":border-left",
+                              [
+                                "str",
+                                "|4px solid ",
+                                [
+                                  "hsl",
+                                  "240",
+                                  "80",
+                                  "86"
+                                ]
+                              ]
+                            ],
+                            [
+                              ":height",
+                              [
+                                "str",
+                                [
+                                  "+",
+                                  "4",
+                                  [
+                                    "*",
+                                    "18",
+                                    [
+                                      "sqrt",
+                                      "days"
+                                    ]
+                                  ]
+                                ],
+                                "|px"
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "<>",
+                      [
+                        "str",
+                        "days",
+                        "| days"
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "if",
+            "conf.:today?",
+            "comp-today",
+            [
+              "comp-conf-info",
+              "conf",
+              [
+                "or",
+                "overlap-with-prev?",
+                "overlap-with-next?"
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/comp-card",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Component"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.types/Conf",
+          [
+            "::",
+            "'calcit.core/Option",
+            "'app.types/Conf"
+          ],
+          [
+            "::",
+            "'calcit.core/Option",
+            "'app.types/Conf"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "comp-conf-info",
+      [
+        "conf",
+        "overlapped?"
+      ],
+      [
+        "div",
+        [
+          "{}",
+          [
+            ":style",
+            [
+              "merge",
+              "ui/column",
+              [
+                "assert-type",
+                [
+                  "{}",
+                  [
+                    ":padding",
+                    "|12px 16px"
+                  ],
+                  [
+                    ":border-radius",
+                    "|8px"
+                  ],
+                  [
+                    ":background-color",
+                    [
+                      "hsl",
+                      "0",
+                      "0",
+                      "100"
+                    ]
+                  ]
+                ],
+                [
+                  "::",
+                  "'Map",
+                  "'Tag",
+                  "'Dynamic"
+                ]
+              ],
+              [
+                "assert-type",
+                [
+                  "if",
+                  "overlapped?",
+                  [
+                    "{}",
+                    [
+                      ":background-color",
+                      [
+                        "hsl",
+                        "33",
+                        "50",
+                        "80"
+                      ]
+                    ]
+                  ],
+                  [
+                    "{}",
+                    [
+                      ":border",
+                      [
+                        "str",
+                        "|1px solid ",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "90"
+                        ]
+                      ]
+                    ],
+                    [
+                      ":box-shadow",
+                      [
+                        "str-spaced",
+                        "|0 0 4px",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "60",
+                          "0.1"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "::",
+                  "'Map",
+                  "'Tag",
+                  "'Dynamic"
+                ]
+              ],
+              [
+                "assert-type",
+                [
+                  "if",
+                  [
+                    ":far?",
+                    "conf"
+                  ],
+                  [
+                    "{}",
+                    [
+                      ":opacity",
+                      "|0.5"
+                    ]
+                  ],
+                  [
+                    "{}"
+                  ]
+                ],
+                [
+                  "::",
+                  "'Map",
+                  "'Tag",
+                  "'Dynamic"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}"
+          ],
+          [
+            "<>",
+            [
+              "or",
+              [
+                ":name",
+                "conf"
+              ],
+              "|??"
+            ],
+            [
+              "{}",
+              [
+                ":font-size",
+                "16"
+              ]
+            ]
+          ],
+          [
+            "=<",
+            "16",
+            "nil"
+          ],
+          [
+            ";",
+            "<>",
+            [
+              "name",
+              [
+                ":code",
+                "conf"
+              ]
+            ]
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}"
+          ],
+          [
+            "<>",
+            [
+              "str",
+              [
+                "let",
+                [
+                  [
+                    "date",
+                    [
+                      "parse-date",
+                      [
+                        ":date",
+                        "conf"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "if",
+                  [
+                    "date-valid?",
+                    "date"
+                  ],
+                  [
+                    "date-to-format",
+                    "date",
+                    "|yyyy-MM-dd ccc"
+                  ],
+                  "|"
+                ]
+              ],
+              "| ",
+              [
+                "if",
+                [
+                  ">",
+                  [
+                    ":days",
+                    "conf"
+                  ],
+                  "1"
+                ],
+                [
+                  "str",
+                  "|(",
+                  [
+                    ":days",
+                    "conf"
+                  ],
+                  "|d)"
+                ],
+                "|_"
+              ]
+            ],
+            [
+              "{}",
+              [
+                ":font-size",
+                "16"
+              ],
+              [
+                ":font-family",
+                "ui/font-normal"
+              ],
+              [
+                ":font-weight",
+                "300"
+              ]
+            ]
+          ],
+          [
+            "=<",
+            "16",
+            "nil"
+          ],
+          [
+            "<>",
+            [
+              ":host",
+              "conf"
+            ]
+          ],
+          [
+            "=<",
+            "8",
+            "nil"
+          ],
+          [
+            "<>",
+            [
+              ":city",
+              "conf"
+            ]
+          ],
+          [
+            "=<",
+            "16",
+            "nil"
+          ],
+          [
+            "a",
+            [
+              "{}",
+              [
+                ":href",
+                [
+                  ":url",
+                  "conf"
+                ]
+              ],
+              [
+                ":inner-text",
+                [
+                  ":url",
+                  "conf"
+                ]
+              ],
+              [
+                ":target",
+                "|_blank"
+              ],
+              [
+                ":rel",
+                "|noopener noreferrer"
+              ],
+              [
+                ":style",
+                [
+                  "{}",
+                  [
+                    ":color",
+                    [
+                      "hsl",
+                      "200",
+                      "80",
+                      "76"
+                    ]
+                  ],
+                  [
+                    ":font-size",
+                    "12"
+                  ],
+                  [
+                    ":white-space",
+                    ":nowrap"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/comp-conf-info",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Element"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.types/Conf",
+          "'Bool"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defcomp",
+      "comp-container",
+      [
+        "reel"
+      ],
+      [
+        "let",
+        [
+          [
+            "store",
+            [
+              ":store",
+              "reel"
+            ]
+          ],
+          [
+            "states",
+            [
+              ":states",
+              "store"
+            ]
+          ],
+          [
+            "schedule",
+            [
+              ":confs",
+              "store"
+            ]
+          ]
+        ],
+        [
+          "[]",
+          [
+            "effect-scroll",
+            "schedule"
+          ],
+          [
+            "if",
+            [
+              "non-nil?",
+              "schedule"
+            ],
+            [
+              "div",
+              [
+                "{}",
+                [
+                  ":style",
+                  [
+                    "merge",
+                    "ui/global"
+                  ]
+                ]
+              ],
+              "comp-header",
+              [
+                "div",
+                [
+                  "{}",
+                  [
+                    ":style",
+                    [
+                      "{}",
+                      [
+                        ":padding",
+                        "|100px 16px 240px"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "list->",
+                  [
+                    "{}",
+                    [
+                      ":style",
+                      [
+                        "{}",
+                        [
+                          ":max-width",
+                          "720"
+                        ],
+                        [
+                          ":margin",
+                          ":auto"
+                        ]
+                      ]
+                    ]
+                  ],
+                  [
+                    "arrange-list",
+                    [
+                      "assert-type",
+                      [
+                        "[]"
+                      ],
+                      [
+                        "::",
+                        "'List",
+                        "'respo.schema/Component"
+                      ]
+                    ],
+                    [
+                      "->",
+                      [
+                        "concat",
+                        [
+                          "[]",
+                          [
+                            "app.types/Conf",
+                            ":name",
+                            "|",
+                            ":date",
+                            [
+                              "today-string"
+                            ],
+                            ":days",
+                            "1",
+                            ":city",
+                            "|",
+                            ":host",
+                            "|",
+                            ":url",
+                            "|",
+                            ":code",
+                            "|",
+                            ":today?",
+                            "true",
+                            ":far?",
+                            "false"
+                          ]
+                        ],
+                        "schedule"
+                      ],
+                      [
+                        "sort",
+                        [
+                          "fn",
+                          [
+                            "a",
+                            "b"
+                          ],
+                          [
+                            "&compare",
+                            "a.:date",
+                            "b.:date"
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "assert-type",
+                      [
+                        "Option",
+                        ":none"
+                      ],
+                      [
+                        "::",
+                        "'Option",
+                        "'app.types/Conf"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "when",
+                "dev?",
+                [
+                  "comp-reel",
+                  [
+                    ">>",
+                    "states",
+                    ":reel"
+                  ],
+                  [
+                    "typed-compat/view-data",
+                    "reel"
+                  ],
+                  [
+                    "{}"
+                  ]
+                ]
+              ]
+            ],
+            [
+              "div",
+              [
+                "{}",
+                [
+                  ":style",
+                  [
+                    "merge",
+                    "ui/center",
+                    [
+                      "{}",
+                      [
+                        ":height",
+                        "400"
+                      ],
+                      [
+                        ":font-family",
+                        "ui/font-fancy"
+                      ],
+                      [
+                        ":font-weight",
+                        "100"
+                      ],
+                      [
+                        ":color",
+                        [
+                          "hsl",
+                          "0",
+                          "0",
+                          "80"
+                        ]
+                      ],
+                      [
+                        ":font-size",
+                        "80"
+                      ]
+                    ]
+                  ]
+                ]
+              ],
+              [
+                "<>",
+                "|Loading..."
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/comp-container",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Component"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'reel.typed/State",
+            "'Enum",
+            "'app.types/Store"
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "comp-header",
+      [
+        "div",
+        [
+          "{}",
+          [
+            ":style",
+            [
+              "merge",
+              "ui/row-parted",
+              [
+                "{}",
+                [
+                  ":padding",
+                  "|12px 12px"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}",
+            [
+              ":style",
+              [
+                "merge",
+                [
+                  "{}",
+                  [
+                    ":font-size",
+                    "20"
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "<>",
+            "|中文技术活动日程"
+          ]
+        ],
+        [
+          "div",
+          [
+            "{}"
+          ],
+          [
+            "a",
+            [
+              "{}",
+              [
+                ":href",
+                "|https://github.com/b-conf/chinese-tech-conf-schedule"
+              ],
+              [
+                ":inner-text",
+                "|Data source"
+              ],
+              [
+                ":target",
+                "|_blank"
+              ],
+              [
+                ":rel",
+                "|noopener noreferrer"
+              ],
+              [
+                ":class-name",
+                "|minor-tip"
+              ],
+              [
+                ":style",
+                [
+                  "{}",
+                  [
+                    ":font-family",
+                    "ui/font-fancy"
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            "=<",
+            "8",
+            "nil"
+          ],
+          [
+            "a",
+            [
+              "{}",
+              [
+                ":href",
+                "|https://github.com/b-conf/conf-dates"
+              ],
+              [
+                ":inner-text",
+                "|Fork"
+              ],
+              [
+                ":target",
+                "|_blank"
+              ],
+              [
+                ":rel",
+                "|noopener noreferrer"
+              ],
+              [
+                ":class-name",
+                "|minor-tip"
+              ],
+              [
+                ":style",
+                [
+                  "{}",
+                  [
+                    ":font-family",
+                    "ui/font-fancy"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/comp-header",
+    "js_ffi": null,
+    "schema": "'respo.schema/Element",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "comp-today",
+      [
+        "div",
+        [
+          "{}",
+          [
+            ":id",
+            "|today"
+          ],
+          [
+            ":style",
+            [
+              "merge",
+              "ui/center",
+              [
+                "{}",
+                [
+                  ":height",
+                  "120"
+                ],
+                [
+                  ":font-size",
+                  "32"
+                ],
+                [
+                  ":font-family",
+                  "ui/font-fancy"
+                ],
+                [
+                  ":font-weight",
+                  "300"
+                ],
+                [
+                  ":border-radius",
+                  "|24px"
+                ],
+                [
+                  ":color",
+                  [
+                    "hsl",
+                    "0",
+                    "0",
+                    "100"
+                  ]
+                ],
+                [
+                  ":box-shadow",
+                  [
+                    "str",
+                    "|0 0 4px ",
+                    [
+                      "hsl",
+                      "240",
+                      "80",
+                      "50",
+                      "0.2"
+                    ]
+                  ]
+                ],
+                [
+                  ":background-color",
+                  [
+                    "hsl",
+                    "220",
+                    "90",
+                    "76"
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "<>",
+          "|Today"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/comp-today",
+    "js_ffi": null,
+    "schema": "'respo.schema/Element",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "date-diff-days",
+      [
+        "a",
+        "b"
+      ],
+      [
+        "let",
+        [
+          [
+            "diff",
+            [
+              ".diff",
+              "a",
+              "b",
+              "|days"
+            ]
+          ]
+        ],
+        [
+          "diff",
+          ":days"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/date-diff-days",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Number"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost",
+          "'app.comp.container/DateTimeHost"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "date-plus-days",
+      [
+        "d",
+        "days"
+      ],
+      [
+        ".plus",
+        "d",
+        [
+          "js-object",
+          [
+            ":days",
+            "days"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/date-plus-days",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'app.comp.container/DateTimeHost"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost",
+          "'Number"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "date-to-format",
+      [
+        "d",
+        "fmt"
+      ],
+      [
+        ".to-format",
+        "d",
+        "fmt"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/date-to-format",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'String"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost",
+          "'String"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "date-to-iso",
+      [
+        "d"
+      ],
+      [
+        ".to-iso",
+        "d"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/date-to-iso",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'String"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "date-valid?",
+      [
+        "d"
+      ],
+      [
+        "d",
+        ":is-valid"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/date-valid?",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Bool"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defeffect",
+      "effect-scroll",
+      [
+        "schedule"
+      ],
+      [
+        "action",
+        "el",
+        "at?"
+      ],
+      [
+        "when",
+        [
+          "non-nil?",
+          "schedule"
+        ],
+        [
+          "js/setTimeout",
+          [
+            "fn",
+            [],
+            [
+              "match",
+              [
+                "query-selector",
+                "|#today"
+              ],
+              [
+                [
+                  ":some",
+                  "target"
+                ],
+                [
+                  "let",
+                  [
+                    [
+                      "scroll-target",
+                      [
+                        "js-cast",
+                        "target",
+                        "ScrollElementHost"
+                      ]
+                    ]
+                  ],
+                  [
+                    ".scroll-into-view!",
+                    "scroll-target"
+                  ]
+                ]
+              ],
+              [
+                [
+                  ":none"
+                ],
+                "&unit"
+              ]
+            ]
+          ],
+          "300"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/effect-scroll",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'respo.schema/Effect"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          [
+            "::",
+            "'List",
+            "'app.types/Conf"
+          ]
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defmacro",
+      "inline",
+      [
+        "path"
+      ],
+      [
+        "read-file",
+        [
+          "str",
+          "path"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/inline",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Macro",
+      [
+        "{}",
+        [
+          ":capabilities",
+          [
+            "#{}",
+            ":fs-read"
+          ]
+        ],
+        [
+          ":expansion",
+          [
+            "::",
+            "'Expr",
+            "'String"
+          ]
+        ],
+        [
+          ":required",
+          [
+            "[]",
+            [
+              "::",
+              "'Expr",
+              "'String"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "math-ceil",
+      [
+        "x"
+      ],
+      [
+        "ceil",
+        "x"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/math-ceil",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Number"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Number"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "parse-date",
+      [
+        "text"
+      ],
+      [
+        "let",
+        [
+          [
+            "date-time",
+            [
+              "js-cast",
+              "dateTimeFactory",
+              "DateTimeFactoryHost"
+            ]
+          ]
+        ],
+        [
+          ".from-iso",
+          "date-time",
+          "text"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/parse-date",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'app.comp.container/DateTimeHost"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'String"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "start-of-day",
+      [
+        "d"
+      ],
+      [
+        ".start-of",
+        "d",
+        "|day"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/start-of-day",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'app.comp.container/DateTimeHost"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.comp.container/DateTimeHost"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "today-string",
+      [],
+      [
+        "let",
+        [
+          [
+            "date-time",
+            [
+              "js-cast",
+              "dateTimeFactory",
+              "DateTimeFactoryHost"
+            ]
+          ],
+          [
+            "now",
+            [
+              ".local",
+              "date-time"
+            ]
+          ]
+        ],
+        [
+          ".to-format",
+          "now",
+          "|yyyy-MM-dd"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.comp.container/today-string",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'String"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "dev?",
+      [
+        "=",
+        "|dev",
+        [
+          "option:unwrap-or",
+          [
+            "get-env",
+            "|mode"
+          ],
+          "|release"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.config/dev?",
+    "js_ffi": null,
+    "schema": "'Bool",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "site",
+      [
+        "{}",
+        [
+          ":storage-key",
+          "|workflow"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.config/site",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Map",
+      "'Tag",
+      "'String"
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "year",
+      [
+        "option:unwrap-or",
+        [
+          "get-env",
+          "|year"
+        ],
+        "|2023"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.config/year",
+    "js_ffi": null,
+    "schema": "'String",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defref",
+      "*reel",
+      [
+        "typed/new-reel",
+        "schema/store"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/*reel",
+    "js_ffi": null,
+    "schema": [
+      "::",
+      "'Ref",
+      [
+        "::",
+        "'reel.typed/State",
+        "'Enum",
+        "'app.types/Store"
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "dispatch!",
+      [
+        "event"
+      ],
+      [
+        "if",
+        [
+          "enum?",
+          "event"
+        ],
+        [
+          "let",
+          [
+            [
+              "op",
+              "event"
+            ]
+          ],
+          [
+            "when",
+            [
+              "and",
+              "config/dev?",
+              [
+                "not=",
+                ":states",
+                [
+                  "option:unwrap-or",
+                  [
+                    "nth",
+                    "op",
+                    "0"
+                  ],
+                  ":unknown"
+                ]
+              ]
+            ],
+            [
+              "js/console.log",
+              "|Dispatch:",
+              "op"
+            ]
+          ],
+          [
+            "match",
+            [
+              "typed/decode-control",
+              "op"
+            ],
+            [
+              [
+                ":some",
+                "control"
+              ],
+              [
+                "reset!",
+                "*reel",
+                [
+                  "typed/apply-control",
+                  "updater",
+                  "@*reel",
+                  "control"
+                ]
+              ]
+            ],
+            [
+              [
+                ":none"
+              ],
+              [
+                "reset!",
+                "*reel",
+                [
+                  "typed/record-op",
+                  "updater",
+                  "@*reel",
+                  "op",
+                  [
+                    "shared/random-uuid"
+                  ],
+                  [
+                    "shared/now-ms"
+                  ]
+                ]
+              ]
+            ]
+          ],
+          "&unit"
+        ],
+        [
+          "raise",
+          "|Expected a Respo event tuple"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/dispatch!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Dynamic"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "load-json-data!",
+      [],
+      [
+        "hint-fn",
+        [
+          "{}",
+          [
+            ":async",
+            "true"
+          ]
+        ]
+      ],
+      [
+        "let",
+        [
+          [
+            "resource",
+            [
+              "js-await",
+              [
+                "js/fetch",
+                "schedule-url"
+              ]
+            ]
+          ],
+          [
+            "json-data",
+            [
+              "js-await",
+              [
+                ".!json",
+                "resource"
+              ]
+            ]
+          ],
+          [
+            "data",
+            [
+              "let",
+              [
+                [
+                  "converted",
+                  [
+                    "to-calcit-data",
+                    "json-data"
+                  ]
+                ]
+              ],
+              [
+                "if",
+                [
+                  "list?",
+                  "converted"
+                ],
+                [
+                  "map",
+                  "converted",
+                  [
+                    "fn",
+                    [
+                      "m"
+                    ],
+                    [
+                      "hint-fn",
+                      [
+                        "{}",
+                        [
+                          ":args",
+                          [
+                            "[]",
+                            "'Dynamic"
+                          ]
+                        ],
+                        [
+                          ":return",
+                          "'app.types/Conf"
+                        ],
+                        [
+                          ":features",
+                          [
+                            "#{}",
+                            ":js-ffi"
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "if",
+                      [
+                        "map?",
+                        "m"
+                      ],
+                      [
+                        "app.types/Conf",
+                        ":name",
+                        [
+                          "contract/expect-string",
+                          "|Conf.name",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|name"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":date",
+                        [
+                          "contract/expect-string",
+                          "|Conf.date",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|date"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":days",
+                        [
+                          "number-or-zero",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|days"
+                            ],
+                            "0"
+                          ]
+                        ],
+                        ":city",
+                        [
+                          "contract/expect-string",
+                          "|Conf.city",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|city"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":host",
+                        [
+                          "contract/expect-string",
+                          "|Conf.host",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|host"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":url",
+                        [
+                          "contract/expect-string",
+                          "|Conf.url",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|url"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":code",
+                        [
+                          "contract/expect-string",
+                          "|Conf.code",
+                          [
+                            "option:unwrap-or",
+                            [
+                              "get",
+                              "m",
+                              "|code"
+                            ],
+                            "|"
+                          ]
+                        ],
+                        ":today?",
+                        "false",
+                        ":far?",
+                        "false"
+                      ],
+                      [
+                        "raise",
+                        "|Expected conference object"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "raise",
+                  "|Expected conference list"
+                ]
+              ]
+            ]
+          ]
+        ],
+        [
+          "dispatch!",
+          [
+            "::",
+            ":load-confs",
+            [
+              "app.types/ConfBatch",
+              ":items",
+              "data"
+            ]
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/load-json-data!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "main!",
+      [],
+      [
+        "if",
+        "config/dev?",
+        [
+          "load-console-formatter!"
+        ]
+      ],
+      [
+        "println",
+        "|Running mode:",
+        [
+          "if",
+          "config/dev?",
+          "|dev",
+          "|release"
+        ]
+      ],
+      [
+        "render-app!"
+      ],
+      [
+        "add-watch!",
+        "*reel",
+        ":changes",
+        [
+          "fn",
+          [
+            "reel",
+            "prev"
+          ],
+          [
+            "render-app!"
+          ]
+        ]
+      ],
+      [
+        "listen-devtools!",
+        "|k",
+        "dispatch!"
+      ],
+      [
+        "load-json-data!"
+      ],
+      [
+        "println",
+        "|App started."
+      ],
+      "&unit"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/main!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ],
+      [
+        ":features",
+        [
+          "#{}",
+          ":js-ffi"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "mount-target",
+      [
+        "option:unwrap",
+        [
+          "respo-browser/query-selector",
+          "|.app"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/mount-target",
+    "js_ffi": null,
+    "schema": "'respo.dom/DomElement",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "number-or-zero",
+      [
+        "value"
+      ],
+      [
+        "if",
+        [
+          "number?",
+          "value"
+        ],
+        "value",
+        "0"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/number-or-zero",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Number"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Dynamic"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "reload!",
+      [],
+      [
+        "if",
+        [
+          "non-nil?",
+          "build-errors"
+        ],
+        [
+          "tip!",
+          "|error",
+          "build-errors"
+        ],
+        [
+          "do",
+          [
+            "remove-watch!",
+            "*reel",
+            ":changes"
+          ],
+          [
+            "clear-cache!"
+          ],
+          [
+            "add-watch!",
+            "*reel",
+            ":changes",
+            [
+              "fn",
+              [
+                "reel",
+                "prev"
+              ],
+              [
+                "render-app!"
+              ]
+            ]
+          ],
+          [
+            "reset!",
+            "*reel",
+            [
+              "typed/refresh",
+              "updater",
+              "@*reel",
+              "schema/store"
+            ]
+          ],
+          [
+            "tip!",
+            "|ok~",
+            "|Ok"
+          ],
+          [
+            "load-json-data!"
+          ]
+        ]
+      ],
+      "&unit"
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/reload!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "render-app!",
+      [],
+      [
+        "render!",
+        "mount-target",
+        [
+          "comp-container",
+          "@*reel"
+        ],
+        "dispatch!"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/render-app!",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'Unit"
+      ],
+      [
+        ":args",
+        [
+          "[]"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "schedule-url",
+      [
+        "str",
+        "|//r.tiye.me/b-conf/chinese-tech-conf-schedule/",
+        "config/year",
+        "|.json"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.main/schedule-url",
+    "js_ffi": null,
+    "schema": "'String",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "def",
+      "store",
+      [
+        "app.types/Store",
+        ":states",
+        [
+          "{}"
+        ],
+        ":confs",
+        [
+          "[]"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.schema/store",
+    "js_ffi": null,
+    "schema": "'app.types/Store",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defstruct",
+      "Conf",
+      [
+        ":name",
+        "'String"
+      ],
+      [
+        ":date",
+        "'String"
+      ],
+      [
+        ":days",
+        "'Number"
+      ],
+      [
+        ":city",
+        "'String"
+      ],
+      [
+        ":host",
+        "'String"
+      ],
+      [
+        ":url",
+        "'String"
+      ],
+      [
+        ":code",
+        "'String"
+      ],
+      [
+        ":today?",
+        "'Bool"
+      ],
+      [
+        ":far?",
+        "'Bool"
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.types/Conf",
+    "js_ffi": null,
+    "schema": "'StructDef",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defstruct",
+      "ConfBatch",
+      [
+        ":items",
+        [
+          "::",
+          "'List",
+          "'app.types/Conf"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.types/ConfBatch",
+    "js_ffi": null,
+    "schema": "'StructDef",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defstruct",
+      "Store",
+      [
+        ":states",
+        [
+          "::",
+          "'Map",
+          "'Dynamic",
+          "'Dynamic"
+        ]
+      ],
+      [
+        ":confs",
+        [
+          "::",
+          "'List",
+          "Conf"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.types/Store",
+    "js_ffi": null,
+    "schema": "'StructDef",
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "read-store",
+      [
+        "value"
+      ],
+      [
+        "if",
+        [
+          "struct?",
+          "value"
+        ],
+        [
+          "struct-match",
+          "value",
+          [
+            "Store",
+            "checked",
+            "checked"
+          ],
+          [
+            "_",
+            "other",
+            [
+              "raise",
+              "|Expected Store"
+            ]
+          ]
+        ],
+        [
+          "decode-map-as",
+          "value",
+          "'Store"
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.types/read-store",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'app.types/Store"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'Dynamic"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  },
+  {
+    "code": [
+      "defn",
+      "updater",
+      [
+        "store",
+        "op",
+        "op-id",
+        "op-time"
+      ],
+      [
+        "match",
+        "op",
+        [
+          [
+            ":states",
+            "cursor",
+            "s"
+          ],
+          [
+            "if",
+            [
+              "list?",
+              "cursor"
+            ],
+            [
+              "let",
+              [
+                [
+                  "next-states",
+                  [
+                    "update-state-tree",
+                    [
+                      ":states",
+                      "store"
+                    ],
+                    "cursor",
+                    "s"
+                  ]
+                ]
+              ],
+              [
+                "if",
+                [
+                  "map?",
+                  "next-states"
+                ],
+                [
+                  "assoc",
+                  "store",
+                  ":states",
+                  "next-states"
+                ],
+                [
+                  "raise",
+                  "|Invalid state tree"
+                ]
+              ]
+            ],
+            [
+              "raise",
+              "|Expected state cursor list"
+            ]
+          ]
+        ],
+        [
+          [
+            ":load-confs",
+            "data"
+          ],
+          [
+            "assoc",
+            "store",
+            ":confs",
+            [
+              "if",
+              [
+                "struct?",
+                "data"
+              ],
+              [
+                "struct-match",
+                "data",
+                [
+                  "app.types/ConfBatch",
+                  "batch",
+                  [
+                    ":items",
+                    "batch"
+                  ]
+                ],
+                [
+                  "_",
+                  "other",
+                  [
+                    "raise",
+                    "|Expected ConfBatch; reload after upgrading the event format"
+                  ]
+                ]
+              ],
+              [
+                "raise",
+                "|Expected ConfBatch; reload after upgrading the event format"
+              ]
+            ]
+          ]
+        ],
+        [
+          [
+            ":hydrate-storage",
+            "data"
+          ],
+          [
+            "app.types/read-store",
+            "data"
+          ]
+        ],
+        [
+          "_",
+          [
+            "do",
+            [
+              "eprintln",
+              "|Unknown op:",
+              "op"
+            ],
+            "store"
+          ]
+        ]
+      ]
+    ],
+    "doc": "",
+    "examples": [],
+    "ffi": null,
+    "ffi_edn": null,
+    "id": "app.updater/updater",
+    "js_ffi": null,
+    "schema": [
+      "{}",
+      [
+        ":kind",
+        ":fn"
+      ],
+      [
+        ":return",
+        "'app.types/Store"
+      ],
+      [
+        ":args",
+        [
+          "[]",
+          "'app.types/Store",
+          "'Enum",
+          "'String",
+          "'Number"
+        ]
+      ]
+    ],
+    "tags": [],
+    "tests": []
+  }
+]
