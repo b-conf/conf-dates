@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -499,8 +499,13 @@
             reel.typed :as typed
             js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
-      :defs $ {} $ 'store
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'DispatchOp $ %{} 'CodeEntry
+          :doc "|Open Enum alias for Respo dispatch-op. This representative value is not dispatched; conference operations and Reel controls retain their constructors and checked payloads."
+          :code $ quote $ def DispatchOp (:: :unhandled)
+          :examples $ []
+          :schema $ :: 'Enum
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             app.types/Store :states ({}) :confs $ []
           :examples $ []

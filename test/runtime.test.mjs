@@ -12,7 +12,7 @@ import {
 } from '../js-out/app.comp.container.mjs';
 import { make_string } from '../js-out/respo.render.html.mjs';
 
-const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items']);
+const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none']);
 const read = (value, tag) => c.option_$o_unwrap(c.get(value, tag));
 const conf = (extra = {}) => {
   const fields = { name: 'Test Conference', date: '2024-02-29', days: 2,
@@ -53,18 +53,18 @@ test('real conference card preserves name, date, host, city and link', () => {
 
 test('first, separated and overlapping cards always retain the actual conference', () => {
   const current = conf({ name: 'Current Conference', date: '2024-03-10' });
-  const first = make_string(comp_card(current, c._PCT_none(), c._PCT_none()));
+  const first = make_string(comp_card(current, c._PCT__$o__$o_(c.Option, t.none), c._PCT__$o__$o_(c.Option, t.none)));
   assert.ok(first.includes('Current Conference'));
-  const separated = make_string(comp_card(current, c._PCT_some(conf({ date: '2024-03-01', days: 1 })), c._PCT_none()));
+  const separated = make_string(comp_card(current, c._PCT__$o__$o_(c.Option, t.some, conf({ date: '2024-03-01', days: 1 })), c._PCT__$o__$o_(c.Option, t.none)));
   assert.ok(separated.includes('9 days'));
   assert.ok(separated.includes('Current Conference'));
-  const overlapping = make_string(comp_card(current, c._PCT_some(conf({ date: '2024-03-09', days: 3 })), c._PCT_none()));
+  const overlapping = make_string(comp_card(current, c._PCT__$o__$o_(c.Option, t.some, conf({ date: '2024-03-09', days: 3 })), c._PCT__$o__$o_(c.Option, t.none)));
   assert.ok(overlapping.includes('Current Conference'));
   assert.ok(overlapping.includes('2px dashed'));
 });
 
 test('arrangement accepts explicit Option boundaries and preserves all entries', () => {
-  const result = arrange_list(c._$L_(), c._$L_(conf(), conf({ name: 'Next', date: '2024-03-01' })), c._PCT_none());
+  const result = arrange_list(c._$L_(), c._$L_(conf(), conf({ name: 'Next', date: '2024-03-01' })), c._PCT__$o__$o_(c.Option, t.none));
   assert.equal(c.count(result), 2);
   for (let i = 0; i < c.count(result); i++) {
     const entry = c.option_$o_unwrap(c.nth(result, i));

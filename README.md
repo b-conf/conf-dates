@@ -7,7 +7,24 @@
 - Year 2022 http://r.tiye.me/b-conf/conf-dates/?year=2022
 - Year 2021 http://r.tiye.me/b-conf/conf-dates/?year=2021
 
-### Dev
+### 0.31.0 迁移：用户影响
+
+CLI/procs 配对正式 `0.31.0`，升级后重新安装依赖并完整刷新。Reel `0.7.0-alpha.4`、
+UI `0.9.0-alpha.4`、Respo `0.17.0-alpha.4` 和 js-ffi `0.2.7` 使用已发布标签；
+UI 库仍有 alpha 依赖，不宣称整图全部稳定。
+
+通过显式 `Enum` schema 别名绑定 Respo dispatch-op；代表值不派发，原 ConfBatch、
+匿名操作、Reel 控制、日期计算和 HUD 保持不变。原 JS 回归中的已移除 some/none
+构造改为名义 Option，九项业务断言未改。原质量基线和部署路径均保留。
+
+本轮完整 strict、216 个定义、原质量基线、九项测试与构建通过。隔离页面用原公开
+2023 年八场日程的只读副本验证 loader、卡片和 Reel 回溯/恢复；原 URL 在 localhost
+直接 fetch 失败，所以本地副本验收不代表生产网络已验证。临时传输适配不进入源码。
+最终远端门禁与评审以本轮 PR 精确提交为准，下述旧版本结果仅作历史记录。
+
+### 历史：0.30.1 迁移
+
+
 
 使用者影响：迁移候选将 Calcit CLI/runtime 配对到正式 `0.30.1`，Yarn 仍为 `4.18.0`。正式配对的完整验收在 Linux CI 中执行；本地先前 alpha 配对结果不作为正式版验收。
 依赖使用正式 Reel `0.6.42`、UI `0.8.1`、Respo `0.16.126`、js-ffi `0.2.6`，不使用模块 hash/alpha 引用，不放宽 Caps 或增加 npm 年龄例外。升级需重新安装整图并生成 JS。
