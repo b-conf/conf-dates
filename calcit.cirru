@@ -15,49 +15,33 @@
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :days |days
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'DateTimeFactoryHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateTimeFactoryHost
-            .from-iso $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeFactoryHost 'String
-              :return 'app.comp.container/DateTimeHost
-            .local $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeFactoryHost
-              :return 'app.comp.container/DateTimeHost
+            .from-iso $ quote $ Fn app.comp.container/DateTimeFactoryHost String (-> app.comp.container/DateTimeHost)
+            .local $ quote $ Fn app.comp.container/DateTimeFactoryHost (-> app.comp.container/DateTimeHost)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} (:from-iso |fromISO) (:local |local)
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'DateTimeHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateTimeHost (:is-valid 'Bool)
-            .plus $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeHost 'JsObject
-              :return 'app.comp.container/DateTimeHost
-            .diff $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeHost 'app.comp.container/DateTimeHost 'String
-              :return 'app.comp.container/DateDiffHost
-            .start-of $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeHost 'String
-              :return 'app.comp.container/DateTimeHost
-            .to-format $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeHost 'String
-              :return 'String
-            .to-iso $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/DateTimeHost
-              :return 'String
+            .plus $ quote $ Fn app.comp.container/DateTimeHost JsObject (-> app.comp.container/DateTimeHost)
+            .diff $ quote $ Fn app.comp.container/DateTimeHost app.comp.container/DateTimeHost String (-> app.comp.container/DateDiffHost)
+            .start-of $ quote $ Fn app.comp.container/DateTimeHost String (-> app.comp.container/DateTimeHost)
+            .to-format $ quote $ Fn app.comp.container/DateTimeHost String (-> String)
+            .to-iso $ quote $ Fn app.comp.container/DateTimeHost (-> String)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} (:diff |diff) (:is-valid |isValid) (:plus |plus) (:start-of |startOf) (:to-format |toFormat) (:to-iso |toISO)
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'ScrollElementHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait ScrollElementHost
-            .scroll-into-view! $ :: 'Fn $ {}
-              :args $ [] 'app.comp.container/ScrollElementHost
-              :return 'Unit
+            .scroll-into-view! $ quote $ Fn app.comp.container/ScrollElementHost (-> Unit)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :scroll-into-view! |scrollIntoView
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'arrange-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn arrange-list (acc confs previous-conf)
             if (empty? confs)
@@ -69,13 +53,12 @@
                 recur
                   conj acc $ comp-card conf previous-conf $ assert-type
                     first $ rest confs
-                    :: 'Option 'app.types/Conf
+                    quote $ Option app.types/Conf
                   rest confs
                   if conf.:far? previous-conf $ Option :some conf
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'respo.schema/Component) (:: 'List 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn (List respo.schema/Component) (List app.types/Conf) (calcit.core/Option app.types/Conf)
+            -> $ List $ List Dynamic
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
             let
@@ -132,8 +115,7 @@
                           <> $ str days "| days"
                 if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'app.types/Conf (:: 'calcit.core/Option 'app.types/Conf) (:: 'calcit.core/Option 'app.types/Conf)
+          :schema $ quote $ Fn app.types/Conf (calcit.core/Option app.types/Conf) (calcit.core/Option app.types/Conf) (-> respo.schema/Component)
         'comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-conf-info (conf overlapped?)
             div
@@ -141,19 +123,19 @@
                 assert-type
                   {} (:padding "|12px 16px") (:border-radius |8px)
                     :background-color $ hsl 0 0 100
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 assert-type
                   if overlapped?
                     {} $ :background-color $ hsl 33 50 80
                     {}
                       :border $ str "|1px solid " $ hsl 0 0 90
                       :box-shadow $ str-spaced "|0 0 4px" $ hsl 0 0 60 0.1
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 assert-type
                   if (:far? conf)
                     {} $ :opacity |0.5
                     {}
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               div ({})
                 <>
                   or (:name conf) |??
@@ -186,8 +168,7 @@
                     :font-size 12
                     :white-space :nowrap
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Element)
-            :args $ [] 'app.types/Conf 'Bool
+          :schema $ quote $ Fn app.types/Conf Bool (-> respo.schema/Element)
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel)
             let
@@ -204,13 +185,15 @@
                         list->
                           {} $ :style $ {} (:max-width 720) (:margin :auto)
                           arrange-list
-                            assert-type ([]) (:: 'List 'respo.schema/Component)
+                            assert-type ([])
+                              quote $ List respo.schema/Component
                             ->
                               concat
                                 [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type (Option :none) (:: 'Option 'app.types/Conf)
+                            assert-type (Option :none)
+                              quote $ Option app.types/Conf
                       when dev? $ comp-reel (>> states :reel) (typed-compat/view-data reel) ({})
                   div
                     {} $ :style $ .merge ui/center
@@ -219,8 +202,7 @@
                         :font-size 80
                     <> |Loading...
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'reel.typed/State 'Enum 'app.types/Store
+          :schema $ quote $ Fn (reel.typed/State Enum app.types/Store) (-> respo.schema/Component)
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -242,7 +224,7 @@
                 a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:rel "|noopener noreferrer") (:class-name |minor-tip)
                   :style $ {} $ :font-family ui/font-fancy
           :examples $ []
-          :schema $ :: 'respo.schema/Element
+          :schema $ quote respo.schema/Element
         'comp-today $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-today
             div
@@ -253,41 +235,31 @@
                   :background-color $ hsl 220 90 76
               <> |Today
           :examples $ []
-          :schema $ :: 'respo.schema/Element
+          :schema $ quote respo.schema/Element
         'date-diff-days $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-diff-days (a b)
             let
                 diff $ .diff a b |days
               diff :days
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'app.comp.container/DateTimeHost 'app.comp.container/DateTimeHost
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost app.comp.container/DateTimeHost (-> Number) (:features :js-ffi)
         'date-plus-days $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-plus-days (d days)
             .plus d $ js-object $ :days days
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.comp.container/DateTimeHost)
-            :args $ [] 'app.comp.container/DateTimeHost 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost Number (-> app.comp.container/DateTimeHost) (:features :js-ffi)
         'date-to-format $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-to-format (d fmt) (.to-format d fmt)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'app.comp.container/DateTimeHost 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost String (-> String) (:features :js-ffi)
         'date-to-iso $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-to-iso (d) (.to-iso d)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'app.comp.container/DateTimeHost
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> String) (:features :js-ffi)
         'date-valid? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-valid? (d) (d :is-valid)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'app.comp.container/DateTimeHost
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> Bool) (:features :js-ffi)
         'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-scroll (schedule) (action el at?)
             when (non-nil? schedule)
@@ -300,37 +272,29 @@
                   (:none) &unit
                 , 300
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
-            :args $ [] $ :: 'List 'app.types/Conf
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (List app.types/Conf) (-> respo.schema/Effect) (:features :js-ffi)
         'inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline (path)
             read-file $ str path
           :examples $ []
-          :schema $ :: 'Macro $ {}
-            :capabilities $ #{} :fs-read
-            :expansion $ :: 'Expr 'String
-            :required $ [] $ :: 'Expr 'String
+          :schema $ quote $ Macro (Expr String)
+            -> $ Expr String
+            :capabilities :fs-read
         'math-ceil $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn math-ceil (x) (ceil x)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number
+          :schema $ quote $ Fn Number (-> Number)
         'parse-date $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-date (text)
             let
                 date-time $ js-cast dateTimeFactory DateTimeFactoryHost
               .from-iso date-time text
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.comp.container/DateTimeHost)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String (-> app.comp.container/DateTimeHost) (:features :js-ffi)
         'start-of-day $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn start-of-day (d) (.start-of d |day)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.comp.container/DateTimeHost)
-            :args $ [] 'app.comp.container/DateTimeHost
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> app.comp.container/DateTimeHost) (:features :js-ffi)
         'today-string $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn today-string ()
             let
@@ -338,9 +302,7 @@
                 now $ .local date-time
               .to-format now |yyyy-MM-dd
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> String) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require (respo-ui.core :as ui)
@@ -359,17 +321,17 @@
           :code $ quote $ def dev?
             = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
-          :schema $ :: 'Bool
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} $ :storage-key |workflow
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
         'year $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def year
             .unwrap-or (get-env |year) |2023
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
@@ -377,7 +339,7 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum 'app.types/Store
+          :schema $ quote $ Ref (reel.typed/State Enum app.types/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (event)
             if (enum? event)
@@ -394,12 +356,9 @@
                 , &unit
               raise "|Expected a Respo event tuple"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
         'load-json-data! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn load-json-data! ()
-            hint-fn $ {} $ :async true
+          :code $ quote $ defn load-json-data! () (hint-fn Async)
             let
                 resource $ js-await $ js/fetch schedule-url
                 json-data $ js-await $ .!json resource
@@ -407,10 +366,7 @@
                     converted $ to-calcit-data json-data
                   if (list? converted)
                     map converted $ fn (m)
-                      hint-fn $ {}
-                        :args $ [] 'Dynamic
-                        :return 'app.types/Conf
-                        :features $ #{} :js-ffi
+                      hint-fn $ Fn Dynamic (-> app.types/Conf) (:features :js-ffi)
                       if (map? m)
                         app.types/Conf :name
                           contract/expect-string |Conf.name $ .unwrap-or (get m |name) |
@@ -431,9 +387,7 @@
                     raise "|Expected conference list"
               dispatch! $ :: :load-confs $ app.types/ConfBatch :items data
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -445,20 +399,17 @@
             println "|App started."
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
             .unwrap $ respo-browser/query-selector |.app
           :examples $ []
-          :schema $ :: 'respo.dom/DomElement
+          :schema $ quote respo.dom/DomElement
         'number-or-zero $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn number-or-zero (value)
             if (number? value) value 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Dynamic
+          :schema $ quote $ Fn Dynamic (-> Number)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (non-nil? build-errors) (tip! |error build-errors)
@@ -469,18 +420,16 @@
                 load-json-data!
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! mount-target (comp-container @*reel) dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -504,12 +453,12 @@
           :doc "|Open Enum alias for Respo dispatch-op. This representative value is not dispatched; conference operations and Reel controls retain their constructors and checked payloads."
           :code $ quote $ def DispatchOp (:: :unhandled)
           :examples $ []
-          :schema $ :: 'Enum
+          :schema $ quote Enum
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             app.types/Store :states ({}) :confs $ []
           :examples $ []
-          :schema $ :: 'app.types/Store
+          :schema $ quote app.types/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
           :require $ app.types :refer $ Store
@@ -518,18 +467,18 @@
         'Conf $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'ConfBatch $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct ConfBatch
-            :items $ :: 'List 'app.types/Conf
+            :items $ quote $ List app.types/Conf
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ :: 'Map 'Dynamic 'Dynamic
+            :states $ quote $ Map Dynamic Dynamic
             :confs $ :: 'List Conf
           :examples $ []
-          :schema $ :: 'StructDef
+          :schema $ quote StructDef
         'read-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-store (value)
             if (struct? value)
@@ -537,8 +486,7 @@
                 _ other $ raise "|Expected Store"
               decode-map-as value 'Store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
-            :args $ [] 'Dynamic
+          :schema $ quote $ Fn Dynamic (-> app.types/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
@@ -561,8 +509,7 @@
               (:hydrate-storage data) (app.types/read-store data)
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.types/Store)
-            :args $ [] 'app.types/Store 'Enum 'String 'Number
+          :schema $ quote $ Fn app.types/Store Enum String Number (-> app.types/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-state-tree
