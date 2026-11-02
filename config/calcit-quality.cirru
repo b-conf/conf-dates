@@ -4,10 +4,10 @@
       :codeNil 0
       :declaredOptional 0
       :deprecatedCalls 0
-      :schemaDynamic 1
+      :schemaDynamic 0
       :typeNone 0
-      :typeNotFull 1
-      :unresolved 1
+      :typeNotFull 0
+      :unresolved 0
       :unsafeCoerce 0
     |app.comp.container/comp-conf-info $ {} (:codeDynamic 0)
       :codeNil 4
@@ -58,10 +58,10 @@
     :codeNil 5
     :declaredOptional 0
     :deprecatedCalls 0
-    :schemaDynamic 3
+    :schemaDynamic 2
     :typeNone 0
-    :typeNotFull 4
-    :unresolved 8
+    :typeNotFull 3
+    :unresolved 7
     :unsafeCoerce 0
   :scope $ {} (:includeDependencies false)
     :namespace nil
