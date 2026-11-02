@@ -10,6 +10,10 @@
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
+        'CardEntryPart $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion CardEntryPart Number respo.schema/Component
+          :examples $ []
+          :schema $ quote UnionDef
         'DateDiffHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateDiffHost (:days 'Number)
           :examples $ []
@@ -45,7 +49,9 @@
         'arrange-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn arrange-list (acc confs previous-conf)
             if (empty? confs)
-              map-indexed acc $ fn (idx x) ([] idx x)
+              map-indexed acc $ fn (idx x)
+                hint-fn $ Fn Number respo.schema/Component $ -> (List app.comp.container/CardEntryPart)
+                [] idx x
               let
                   conf $ assert-type
                     .unwrap $ first confs
@@ -57,8 +63,8 @@
                   rest confs
                   if conf.:far? previous-conf $ Option :some conf
           :examples $ []
-          :schema $ quote $ Fn (List respo.schema/Component) (List app.types/Conf) (calcit.core/Option app.types/Conf)
-            -> $ List $ List Dynamic
+          :schema $ quote $ Fn (List respo.schema/Component) (List app.types/Conf) (Option app.types/Conf)
+            -> $ List $ List app.comp.container/CardEntryPart
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
             let
@@ -104,8 +110,8 @@
                         prev-end-date $ date-plus-days prev-date $ dec
                           math-ceil $ prev-conf-value.:days
                         days $ date-diff-days date prev-end-date
-                      when (> days 0)
-                        div
+                      if (> days 0)
+                        Option :some $ div
                           {} $ :style $ .merge ui/row-middle
                             {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "|0 8px") (:margin "|8px 20px")
                               :border-left $ str "|4px solid " $ hsl 240 80 86
@@ -113,6 +119,7 @@
                                 + 4 $ * 18 $ sqrt days
                                 , |px
                           <> $ str days "| days"
+                        Option :none
                 if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
           :examples $ []
           :schema $ quote $ Fn app.types/Conf (calcit.core/Option app.types/Conf) (calcit.core/Option app.types/Conf) (-> respo.schema/Component)
@@ -194,7 +201,9 @@
                               sort $ fn (a b) (&compare a.:date b.:date)
                             assert-type (Option :none)
                               quote $ Option app.types/Conf
-                      when dev? $ comp-reel (>> states :reel) (typed-compat/view-data reel) ({})
+                      if dev?
+                        Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                        Option :none
                   div
                     {} $ :style $ .merge ui/center
                       {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
@@ -309,12 +318,11 @@
             respo.util.format :refer $ hsl
             respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
             respo.comp.space :refer $ =<
-            reel.comp.reel :refer $ comp-reel
+            reel.comp.reel :refer $ comp-typed-reel
             app.config :refer $ dev?
             app.types :refer $ Conf
             |../entry/luxon.mjs :refer $ dateTimeFactory
             js-ffi.browser :refer $ query-selector
-            reel.typed-compat :as typed-compat
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
@@ -465,7 +473,7 @@
     'app.types $ %{} 'FileEntry
       :defs $ {}
         'Conf $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defstruct Conf (:name 'String) (:date 'String) (:days 'Number) (:city 'String) (:host 'String) (:url 'String) (:code 'String) (:today? 'Bool) (:far? 'Bool)
+          :code $ quote $ defstruct Conf (:name String) (:date String) (:days Number) (:city String) (:host String) (:url String) (:code String) (:today? Bool) (:far? Bool)
           :examples $ []
           :schema $ quote StructDef
         'ConfBatch $ %{} 'CodeEntry (:doc |)

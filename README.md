@@ -9,15 +9,9 @@
 
 ### 使用者影响
 
-CLI 与 npm runtime 配对正式 **0.32.1**，升级后需重新安装整张依赖图、重新生成
-JS 并完整刷新。依赖使用已发布 Reel **0.7.0-alpha.5**、UI **0.9.0**、Respo
-**0.17.1** 和 JS-FFI **0.2.9**；Reel 仍为 alpha，不宣称整图全部稳定。
+升级后请安装正式 Calcit 0.34.1 与同版 `@calcit/procs`，重新生成 JS 并刷新页面。依赖图使用 Reel 0.8.0、UI 0.12.0、Respo 0.18.0 和 JS FFI 0.2.9。
 
-官方格式迁移转换 18 处旧类型表达式，40 个项目定义的 schema 合同不变。
-原 Enum dispatch-op、ConfBatch、日期计算、HUD、质量基线和部署路径保留。
-完整 strict、全定义检查、原九项业务测试、原质量基线和 Vite 构建通过；
-Caps strict/toolchain 使用真实已发布依赖，不使用本地候选或 hash。
-Yarn 保留一小时 npm 发布年龄门禁，无单包豁免。
+会议列表仍按序号组织卡片。每项的成员类型现在为 `CardEntryPart = Number | Component`。开发模式直接将具名 Reel 状态交给调试组件，卡片仅在日期有正间隔时显示天数。
 
 内部 `:load-confs` 载荷为 `ConfBatch(items: List<Conf>)`，不能热重放旧裸列表事件；
 HTTP JSON、年份参数、Luxon 日期语义和 300ms 滚动延时不变。Reel 使用
