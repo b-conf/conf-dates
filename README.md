@@ -1,4 +1,4 @@
-## Conf Dates
+# Conf Dates
 
 > try a visual way displaying conf dates.
 > Data from [chinese-tech-conf-schedule](https://github.com/hax/chinese-tech-conf-schedule/tree/master).
@@ -9,7 +9,9 @@
 
 ### 使用者影响
 
-升级后请安装正式 Calcit 0.34.1 与同版 `@calcit/procs`，重新生成 JS 并刷新页面。依赖图使用 Reel 0.8.0、UI 0.12.0、Respo 0.18.0 和 JS FFI 0.2.9。
+升级后请安装正式 Calcit 0.34.2 与同版 `@calcit/procs`，重新生成 JS 并刷新页面。依赖图使用 Reel 0.8.1、UI 0.12.1、Respo 0.18.1 和 JS FFI 0.2.9。
+
+卡片样式复用 UI 的 `StyleValue = String | Number | Tag` union。移除三处 `Map Tag Dynamic` 强转后，官方 `query type-at` 对合并结果精确推断为 `Map Tag respo-ui.schema/StyleValue`，不新增本地样式类型或 cast。原样式值、重叠/远期条件及合并顺序保持；原质量基线逐字节不变。
 
 会议列表仍按序号组织卡片。每项的成员类型现在为 `CardEntryPart = Number | Component`。开发模式直接将具名 Reel 状态交给调试组件，卡片仅在日期有正间隔时显示天数。
 
