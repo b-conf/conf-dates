@@ -127,22 +127,16 @@
           :code $ quote $ defn comp-conf-info (conf overlapped?)
             div
               {} $ :style $ .merge ui/column
-                assert-type
-                  {} (:padding "|12px 16px") (:border-radius |8px)
-                    :background-color $ hsl 0 0 100
-                  quote $ Map Tag Dynamic
-                assert-type
-                  if overlapped?
-                    {} $ :background-color $ hsl 33 50 80
-                    {}
-                      :border $ str "|1px solid " $ hsl 0 0 90
-                      :box-shadow $ str-spaced "|0 0 4px" $ hsl 0 0 60 0.1
-                  quote $ Map Tag Dynamic
-                assert-type
-                  if (:far? conf)
-                    {} $ :opacity |0.5
-                    {}
-                  quote $ Map Tag Dynamic
+                {} (:padding "|12px 16px") (:border-radius |8px)
+                  :background-color $ hsl 0 0 100
+                if overlapped?
+                  {} $ :background-color $ hsl 33 50 80
+                  {}
+                    :border $ str "|1px solid " $ hsl 0 0 90
+                    :box-shadow $ str-spaced "|0 0 4px" $ hsl 0 0 60 0.1
+                if (:far? conf)
+                  {} $ :opacity |0.5
+                  {}
               div ({})
                 <>
                   or (:name conf) |??
