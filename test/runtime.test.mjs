@@ -11,8 +11,9 @@ import {
   date_plus_days, date_diff_days, start_of_day, today_string,
 } from '../js-out/app.comp.container.mjs';
 import { make_string } from '../js-out/respo.render.html.mjs';
+import { EffectParams } from '../js-out/respo.schema.mjs';
 
-const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none']);
+const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none', 'action', 'target', 'at-place?']);
 const read = (value, tag) => c.option_$o_unwrap(c.get(value, tag));
 const conf = (extra = {}) => {
   const fields = { name: 'Test Conference', date: '2024-02-29', days: 2,
@@ -99,7 +100,8 @@ test('actual scroll effect uses the existing 300ms delay and tolerates a missing
     globalThis.document = { querySelector(selector) { assert.equal(selector, '#today'); return target; } };
     globalThis.setTimeout = (fn, ms) => { callback = fn; delay = ms; return 1; };
     const effect = effect_scroll(c._$L_());
-    read(effect, t.method)(read(effect, t.args), c._$L_(t.mount, null, true));
+    const params = c._$n__PCT__$M_(EffectParams, t.action, t.mount, t.target, target, t['at-place?'], true);
+    read(effect, t.method)(read(effect, t.args), params);
     assert.equal(delay, 300);
     callback();
     assert.equal(scrolls, 1);

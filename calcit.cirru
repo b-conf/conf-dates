@@ -22,26 +22,26 @@
           :schema $ quote Trait
         'DateTimeFactoryHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateTimeFactoryHost
-            .from-iso $ quote $ Fn app.comp.container/DateTimeFactoryHost String (-> app.comp.container/DateTimeHost)
-            .local $ quote $ Fn app.comp.container/DateTimeFactoryHost (-> app.comp.container/DateTimeHost)
+            .from-iso $ Fn app.comp.container/DateTimeFactoryHost String $ -> app.comp.container/DateTimeHost
+            .local $ Fn app.comp.container/DateTimeFactoryHost $ -> app.comp.container/DateTimeHost
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} (:from-iso |fromISO) (:local |local)
           :schema $ quote Trait
         'DateTimeHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateTimeHost (:is-valid 'Bool)
-            .plus $ quote $ Fn app.comp.container/DateTimeHost JsObject (-> app.comp.container/DateTimeHost)
-            .diff $ quote $ Fn app.comp.container/DateTimeHost app.comp.container/DateTimeHost String (-> app.comp.container/DateDiffHost)
-            .start-of $ quote $ Fn app.comp.container/DateTimeHost String (-> app.comp.container/DateTimeHost)
-            .to-format $ quote $ Fn app.comp.container/DateTimeHost String (-> String)
-            .to-iso $ quote $ Fn app.comp.container/DateTimeHost (-> String)
+            .plus $ Fn app.comp.container/DateTimeHost JsObject $ -> app.comp.container/DateTimeHost
+            .diff $ Fn app.comp.container/DateTimeHost app.comp.container/DateTimeHost String $ -> app.comp.container/DateDiffHost
+            .start-of $ Fn app.comp.container/DateTimeHost String $ -> app.comp.container/DateTimeHost
+            .to-format $ Fn app.comp.container/DateTimeHost String $ -> String
+            .to-iso $ Fn app.comp.container/DateTimeHost $ -> String
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} (:diff |diff) (:is-valid |isValid) (:plus |plus) (:start-of |startOf) (:to-format |toFormat) (:to-iso |toISO)
           :schema $ quote Trait
         'ScrollElementHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait ScrollElementHost
-            .scroll-into-view! $ quote $ Fn app.comp.container/ScrollElementHost (-> Unit)
+            .scroll-into-view! $ Fn app.comp.container/ScrollElementHost $ -> Unit
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :scroll-into-view! |scrollIntoView
@@ -59,7 +59,7 @@
                 recur
                   conj acc $ comp-card conf previous-conf $ assert-type
                     first $ rest confs
-                    quote $ Option app.types/Conf
+                    Option app.types/Conf
                   rest confs
                   if conf.:far? previous-conf $ Option :some conf
           :examples $ []
@@ -141,7 +141,7 @@
                 <>
                   or (:name conf) |??
                   {} $ :font-size 16
-                =< 16 nil
+                space-x 16
                 ; <> $ name $ :code conf
               div ({})
                 <>
@@ -154,11 +154,11 @@
                       str "|(" (:days conf) "|d)"
                       , |_
                   {} (:font-size 16) (:font-family ui/font-normal) (:font-weight 300)
-                =< 16 nil
+                space-x 16
                 <> $ :host conf
-                =< 8 nil
+                space-x 8
                 <> $ :city conf
-                =< 16 nil
+                space-x 16
                 a $ {}
                   :href $ :url conf
                   :inner-text $ :url conf
@@ -186,15 +186,13 @@
                         list->
                           {} $ :style $ {} (:max-width 720) (:margin :auto)
                           arrange-list
-                            assert-type ([])
-                              quote $ List respo.schema/Component
+                            assert-type ([]) (List respo.schema/Component)
                             ->
                               concat
                                 [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type (Option :none)
-                              quote $ Option app.types/Conf
+                            assert-type (Option :none) (Option app.types/Conf)
                       if dev?
                         Option :some $ comp-typed-reel (>> states :reel) reel $ {}
                         Option :none
@@ -205,7 +203,7 @@
                         :font-size 80
                     <> |Loading...
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State Enum app.types/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State AnyEnum app.types/Store) (-> respo.schema/Component)
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -223,7 +221,7 @@
                   :rel "|noopener noreferrer"
                   :class-name |minor-tip
                   :style $ {} $ :font-family ui/font-fancy
-                =< 8 nil
+                space-x 8
                 a $ {} (:href |https://github.com/b-conf/conf-dates) (:inner-text |Fork) (:target |_blank) (:rel "|noopener noreferrer") (:class-name |minor-tip)
                   :style $ {} $ :font-family ui/font-fancy
           :examples $ []
@@ -311,7 +309,7 @@
           :require (respo-ui.core :as ui)
             respo.util.format :refer $ hsl
             respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-x
             reel.comp.reel :refer $ comp-typed-reel
             app.config :refer $ dev?
             app.types :refer $ Conf
@@ -341,24 +339,20 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State Enum app.types/Store)
+          :schema $ quote $ Ref (reel.typed/State AnyEnum app.types/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (event)
-            if (enum? event)
-              let
-                  op event
-                when
-                  and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
-                  js/console.log |Dispatch: op
-                match (typed/decode-control op)
-                  (:some control)
-                    reset! *reel $ typed/apply-control updater @*reel control
-                  (:none)
-                    reset! *reel $ typed/record-op updater @*reel op (shared/random-uuid) (shared/now-ms)
-                , &unit
-              raise "|Expected a Respo event tuple"
+          :code $ quote $ defn dispatch! (op)
+            when
+              and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
+              js/console.log |Dispatch: op
+            match (typed/decode-control op)
+              (:some control)
+                reset! *reel $ typed/apply-control updater @*reel control
+              (:none)
+                reset! *reel $ typed/record-op updater @*reel op (shared/random-uuid) (shared/now-ms)
+            , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
         'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-json-data! () (hint-fn Async)
             let
@@ -455,7 +449,7 @@
           :doc "|Open Enum alias for Respo dispatch-op. This representative value is not dispatched; conference operations and Reel controls retain their constructors and checked payloads."
           :code $ quote $ def DispatchOp (:: :unhandled)
           :examples $ []
-          :schema $ quote Enum
+          :schema $ quote AnyEnum
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             app.types/Store :states ({}) :confs $ []
@@ -472,12 +466,12 @@
           :schema $ quote StructDef
         'ConfBatch $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct ConfBatch
-            :items $ quote $ List app.types/Conf
+            :items $ List app.types/Conf
           :examples $ []
           :schema $ quote StructDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
-            :states $ quote $ Map Dynamic Dynamic
+            :states $ Map Dynamic Dynamic
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ quote StructDef
@@ -511,7 +505,7 @@
               (:hydrate-storage data) (app.types/read-store data)
               _ $ do (eprintln "|Unknown op:" op) store
           :examples $ []
-          :schema $ quote $ Fn app.types/Store Enum String Number (-> app.types/Store)
+          :schema $ quote $ Fn app.types/Store AnyEnum String Number (-> app.types/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-state-tree

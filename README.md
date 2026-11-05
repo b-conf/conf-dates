@@ -9,7 +9,7 @@
 
 ### 使用者影响
 
-升级后请安装正式 Calcit 0.34.2 与同版 `@calcit/procs`，重新生成 JS 并刷新页面。依赖图使用 Reel 0.8.1、UI 0.12.1、Respo 0.18.1 和 JS FFI 0.2.9。
+升级后请安装正式 Calcit 0.35.1 与同版 `@calcit/procs`，重新生成 JS 并刷新页面。依赖图使用 Reel 0.9.2、UI 0.15.1、Respo 0.19.4 和 JS FFI 0.2.13。五个水平间距改用 `space-x`，沿用原宽度。
 
 卡片样式复用 UI 的 `StyleValue = String | Number | Tag` union。移除三处 `Map Tag Dynamic` 强转后，官方 `query type-at` 对合并结果精确推断为 `Map Tag respo-ui.schema/StyleValue`，不新增本地样式类型或 cast。原样式值、重叠/远期条件及合并顺序保持；原质量基线逐字节不变。
 
@@ -17,7 +17,7 @@
 
 内部 `:load-confs` 载荷为 `ConfBatch(items: List<Conf>)`，不能热重放旧裸列表事件；
 HTTP JSON、年份参数、Luxon 日期语义和 300ms 滚动延时不变。Reel 使用
-`State<Enum, Store>`，Store 混合状态如实保留开放 Map 类型，unsafe 基线仍为 0。
+`State<AnyEnum, Store>`，派发入口接收 Respo 与 Reel 实际发送的枚举，Store 混合状态保留开放 Map 类型，unsafe 基线仍为 0。
 旧 nominal Store 保持身份，Map 输入经过原 decoder 恢复，不新增兼容或 proof 规则。
 
 此前 0.32.0 候选以公开 2023 年八场日程的本地只读副本验证 loader、卡片、
