@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op |app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -203,7 +203,7 @@
                         :font-size 80
                     <> |Loading...
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State AnyEnum app.types/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store) (-> respo.schema/Component)
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -339,7 +339,7 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State AnyEnum app.types/Store)
+          :schema $ quote $ Ref (reel.typed/State app.types/Op app.types/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when
@@ -349,7 +349,10 @@
               (:some control)
                 reset! *reel $ typed/apply-control updater @*reel control
               (:none)
-                reset! *reel $ typed/record-op updater @*reel op (shared/random-uuid) (shared/now-ms)
+                match (app.types/decode-op op)
+                  (:some action)
+                    reset! *reel $ typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
+                  (:none) &unit
             , &unit
           :examples $ []
           :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
@@ -381,7 +384,7 @@
                                       , :today? false :far? false
                         raise "|Expected conference object"
                     raise "|Expected conference list"
-              dispatch! $ :: :load-confs $ app.types/ConfBatch :items data
+              dispatch! $ app.types/Op :load-confs $ app.types/ConfBatch :items data
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
@@ -469,12 +472,40 @@
             :items $ List app.types/Conf
           :examples $ []
           :schema $ quote StructDef
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum Op
+            :states (List Dynamic) Dynamic
+            :load-confs app.types/ConfBatch
+            :hydrate-storage app.types/Store
+          :examples $ []
+          :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ Map Dynamic Dynamic
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ quote StructDef
+        'decode-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-op (op)
+            match op
+              (:states cursor data)
+                if (list? cursor)
+                  Option :some $ app.types/Op :states
+                    decode-map-as cursor $ List Dynamic
+                    , data
+                  raise "|Expected state cursor list"
+              (:load-confs data)
+                if (struct? data)
+                  struct-match data
+                    app.types/ConfBatch batch $ Option :some $ app.types/Op :load-confs batch
+                    _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
+                  raise "|Expected ConfBatch; reload after upgrading the event format"
+              (:hydrate-storage data)
+                Option :some $ app.types/Op :hydrate-storage $ read-store data
+              _ $ do (eprintln "|Unknown op:" op) (Option :none)
+          :examples $ []
+          :schema $ quote $ Fn AnyEnum
+            -> $ Option app.types/Op
         'read-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-store (value)
             if (struct? value)
@@ -482,7 +513,7 @@
                 _ other $ raise "|Expected Store"
               decode-map-as value 'Store
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> app.types/Store)
+          :schema $ quote $ Fn Input (-> app.types/Store) (:generics Input)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
@@ -490,22 +521,15 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
             match op
-              (:states cursor s)
-                if (list? cursor)
-                  let
-                      next-states $ update-state-tree (:states store) cursor s
-                    if (map? next-states) (assoc store :states next-states) (raise "|Invalid state tree")
-                  raise "|Expected state cursor list"
-              (:load-confs data)
-                assoc store :confs $ if (struct? data)
-                  struct-match data
-                    app.types/ConfBatch batch $ :items batch
-                    _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
-                  raise "|Expected ConfBatch; reload after upgrading the event format"
-              (:hydrate-storage data) (app.types/read-store data)
-              _ $ do (eprintln "|Unknown op:" op) store
+              (:states cursor data)
+                let
+                    next-states $ update-state-tree (:states store) cursor data
+                  if (map? next-states) (assoc store :states next-states) (raise "|Invalid state tree")
+              (:load-confs batch)
+                assoc store :confs $ :items batch
+              (:hydrate-storage saved) saved
           :examples $ []
-          :schema $ quote $ Fn app.types/Store AnyEnum String Number (-> app.types/Store)
+          :schema $ quote $ Fn app.types/Store app.types/Op String Number (-> app.types/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ respo.cursor :refer $ update-state-tree
