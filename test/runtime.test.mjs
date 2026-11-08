@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as c from '../js-out/calcit.core.mjs';
-import { Conf, ConfBatch, Store } from '../js-out/app.types.mjs';
+import { Conf, ConfBatch, Store, decode_op } from '../js-out/app.types.mjs';
 import { store } from '../js-out/app.schema.mjs';
 import { updater } from '../js-out/app.updater.mjs';
 import { new_reel } from '../js-out/reel.typed.mjs';
@@ -34,7 +34,8 @@ test('initial nominal Store renders the real schedule header and Today marker', 
 test('loading typed conferences preserves Store identity and cursor state', () => {
   const items = c._$L_(conf());
   const batch = c._$n__PCT__$M_(ConfBatch, t.items, items);
-  const updated = updater(store, c._$o__$o_(t['load-confs'], batch), 'test', 0);
+  const action = c.option_$o_unwrap(decode_op(c._$o__$o_(t['load-confs'], batch)));
+  const updated = updater(store, action, 'test', 0);
   assert.equal(c.option_$o_unwrap(c.struct_definition(updated)), Store);
   assert.equal(read(updated, t.confs), items);
   assert.equal(read(updated, t.states), read(store, t.states));
