@@ -342,20 +342,13 @@
           :schema $ quote $ Ref (reel.typed/State app.types/Op app.types/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            when
-              and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
-              js/console.log |Dispatch: op
-            match (typed/decode-control op)
-              (:some control)
-                reset! *reel $ typed/apply-control updater @*reel control
-              (:none)
-                match (app.types/decode-op op)
-                  (:some action)
-                    reset! *reel $ typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
-                  (:none) &unit
+            reset! *reel $ match op
+              (reel.typed/Control control) (typed/apply-control updater @*reel control)
+              (app.types/Op action)
+                typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn app.types/ResolvedOp (-> Unit) (:features :js-ffi)
         'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-json-data! () (hint-fn Async)
             let
@@ -393,7 +386,7 @@
             println "|Running mode:" $ if config/dev? |dev |release
             render-app!
             add-watch! *reel :changes $ fn (reel prev) (render-app!)
-            listen-devtools! |k dispatch!
+            listen-devtools-toggle! |k $ fn () $ dispatch! (reel.typed/Control :toggle)
             load-json-data!
             println "|App started."
             , &unit
@@ -422,9 +415,17 @@
           :schema $ quote $ Fn (-> Unit)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! mount-target (comp-container @*reel) dispatch!
+            render-with! mount-target
+              fn () $ comp-container @*reel
+              fn (op)
+                when
+                  and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
+                  js/console.log |Dispatch: op
+                match (app.types/decode-op op)
+                  (:some resolved) (dispatch! resolved)
+                  (:none) &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
@@ -432,12 +433,12 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            respo.core :refer $ render! clear-cache!
+            respo.core :refer $ render-with! clear-cache!
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
             app.types :refer $ Conf
-            reel.util :refer $ listen-devtools!
+            reel.util :refer $ listen-devtools-toggle!
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
@@ -479,6 +480,10 @@
             :hydrate-storage app.types/Store
           :examples $ []
           :schema $ quote EnumDef
+        'ResolvedOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion ResolvedOp app.types/Op reel.typed/Control
+          :examples $ []
+          :schema $ quote UnionDef
         'Store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Store
             :states $ Map Dynamic Dynamic
@@ -487,25 +492,32 @@
           :schema $ quote StructDef
         'decode-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-op (op)
-            match op
-              (:states cursor data)
-                if (list? cursor)
-                  Option :some $ app.types/Op :states
-                    decode-map-as cursor $ List Dynamic
-                    , data
-                  raise "|Expected state cursor list"
-              (:load-confs data)
-                if (struct? data)
-                  struct-match data
-                    app.types/ConfBatch batch $ Option :some $ app.types/Op :load-confs batch
-                    _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
-                  raise "|Expected ConfBatch; reload after upgrading the event format"
-              (:hydrate-storage data)
-                Option :some $ app.types/Op :hydrate-storage $ read-store data
-              _ $ do (eprintln "|Unknown op:" op) (Option :none)
+            let
+                some-op $ fn (value)
+                  hint-fn $ Fn app.types/ResolvedOp $ -> (Option app.types/ResolvedOp)
+                  Option :some value
+              match (typed/decode-control op)
+                (:some control) (some-op control)
+                (:none)
+                  match op
+                    (:states cursor data)
+                      if (list? cursor)
+                        some-op $ Op :states
+                          decode-map-as cursor $ List Dynamic
+                          , data
+                        raise "|Expected state cursor list"
+                    (:load-confs data)
+                      if (struct? data)
+                        struct-match data
+                          app.types/ConfBatch batch $ some-op $ Op :load-confs batch
+                          _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
+                        raise "|Expected ConfBatch; reload after upgrading the event format"
+                    (:hydrate-storage data)
+                      some-op $ Op :hydrate-storage $ read-store data
+                    _ $ do (eprintln "|Unknown op:" op) (Option :none)
           :examples $ []
           :schema $ quote $ Fn AnyEnum
-            -> $ Option app.types/Op
+            -> $ Option app.types/ResolvedOp
         'read-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-store (value)
             if (struct? value)
@@ -516,6 +528,7 @@
           :schema $ quote $ Fn Input (-> app.types/Store) (:generics Input)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
+          :require $ reel.typed :as typed
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
