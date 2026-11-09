@@ -11,9 +11,10 @@ import {
   date_plus_days, date_diff_days, start_of_day, today_string,
 } from '../js-out/app.comp.container.mjs';
 import { make_string } from '../js-out/respo.render.html.mjs';
+import { render_node_value } from '../js-out/respo.util.detect.mjs';
 import { EffectParams } from '../js-out/respo.schema.mjs';
 
-const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none', 'action', 'target', 'at-place?']);
+const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none', 'action', 'target', 'at-place?', 'key', 'node']);
 const read = (value, tag) => c.option_$o_unwrap(c.get(value, tag));
 const renderSchedule = (state) => make_string(comp_container(new_reel(state), () => {}));
 const conf = (extra = {}) => {
@@ -71,8 +72,8 @@ test('arrangement accepts explicit Option boundaries and preserves all entries',
   assert.equal(c.count(result), 2);
   for (let i = 0; i < c.count(result); i++) {
     const entry = c.option_$o_unwrap(c.nth(result, i));
-    assert.equal(c.option_$o_unwrap(c.nth(entry, 0)), i);
-    assert.ok(make_string(c.option_$o_unwrap(c.nth(entry, 1))).includes(i === 0 ? 'Test Conference' : 'Next'));
+    assert.equal(read(entry, t.key), i);
+    assert.ok(make_string(render_node_value(c.option_$o_unwrap(read(entry, t.node)))).includes(i === 0 ? 'Test Conference' : 'Next'));
   }
 });
 

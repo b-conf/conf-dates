@@ -10,10 +10,6 @@
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
-        'CardEntryPart $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defunion CardEntryPart Number respo.schema/Component
-          :examples $ []
-          :schema $ quote UnionDef
         'DateDiffHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateDiffHost (:days 'Number)
           :examples $ []
@@ -50,8 +46,8 @@
           :code $ quote $ defn arrange-list (acc confs previous-conf)
             if (empty? confs)
               map-indexed acc $ fn (idx x)
-                hint-fn $ Fn Number respo.schema/Component $ -> (List app.comp.container/CardEntryPart)
-                [] idx x
+                hint-fn $ Fn Number respo.schema/Component $ -> respo.schema/ChildPair
+                keyed-component idx x
               let
                   conf $ assert-type
                     .unwrap $ first confs
@@ -64,7 +60,7 @@
                   if conf.:far? previous-conf $ Option :some conf
           :examples $ []
           :schema $ quote $ Fn (List respo.schema/Component) (List app.types/Conf) (Option app.types/Conf)
-            -> $ List $ List app.comp.container/CardEntryPart
+            -> $ List respo.schema/ChildPair
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
             let
@@ -183,7 +179,7 @@
                     , comp-header
                       div
                         {} $ :style $ {} (:padding "|100px 16px 240px")
-                        list->
+                        keyed->
                           {} $ :style $ {} (:max-width 720) (:margin :auto)
                           arrange-list
                             assert-type ([]) (List respo.schema/Component)
@@ -310,7 +306,7 @@
         :code $ quote $ ns app.comp.container
           :require (respo-ui.core :as ui)
             respo.util.format :refer $ hsl
-            respo.core :refer $ defcomp defeffect <> >> div button textarea span input a list->
+            respo.core :refer $ defcomp defeffect <> >> div button textarea span input a keyed-> keyed-component
             respo.comp.space :refer $ space-x
             reel.comp.reel :refer $ comp-typed-reel
             app.config :refer $ dev?
@@ -472,7 +468,7 @@
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op
-            :states (List Dynamic) Dynamic
+            :states (List respo.schema/CoordKey) Dynamic
             :load-confs app.types/ConfBatch
             :hydrate-storage app.types/Store
           :examples $ []
