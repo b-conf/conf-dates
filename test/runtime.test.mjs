@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as c from '../js-out/calcit.core.mjs';
-import { Conf, ConfBatch, Store, decode_op } from '../js-out/app.types.mjs';
+import { Conf, ConfBatch, Op, Store } from '../js-out/app.types.mjs';
 import { store } from '../js-out/app.schema.mjs';
 import { updater } from '../js-out/app.updater.mjs';
 import { new_reel } from '../js-out/reel.typed.mjs';
@@ -15,6 +15,7 @@ import { EffectParams } from '../js-out/respo.schema.mjs';
 
 const t = c.init_tags(['store', 'confs', 'states', 'load-confs', 'name', 'method', 'args', 'mount', 'items', 'some', 'none', 'action', 'target', 'at-place?']);
 const read = (value, tag) => c.option_$o_unwrap(c.get(value, tag));
+const renderSchedule = (state) => make_string(comp_container(new_reel(state), () => {}));
 const conf = (extra = {}) => {
   const fields = { name: 'Test Conference', date: '2024-02-29', days: 2,
     city: 'Shanghai', host: 'Test Host', url: 'https://example.test/conference',
@@ -24,7 +25,7 @@ const conf = (extra = {}) => {
 
 test('initial nominal Store renders the real schedule header and Today marker', () => {
   assert.equal(c.option_$o_unwrap(c.struct_definition(store)), Store);
-  const html = make_string(comp_container(new_reel(store)));
+  const html = renderSchedule(store);
   assert.ok(html.includes('中文技术活动日程'));
   assert.ok(html.includes('id="today"'));
   assert.ok(html.includes('https://github.com/b-conf/chinese-tech-conf-schedule'));
@@ -34,13 +35,13 @@ test('initial nominal Store renders the real schedule header and Today marker', 
 test('loading typed conferences preserves Store identity and cursor state', () => {
   const items = c._$L_(conf());
   const batch = c._$n__PCT__$M_(ConfBatch, t.items, items);
-  const action = c.option_$o_unwrap(decode_op(c._$o__$o_(t['load-confs'], batch)));
+  const action = c._PCT__$o__$o_(Op, t['load-confs'], batch);
   const updated = updater(store, action, 'test', 0);
   assert.equal(c.option_$o_unwrap(c.struct_definition(updated)), Store);
   assert.equal(read(updated, t.confs), items);
   assert.equal(read(updated, t.states), read(store, t.states));
   assert.equal(c.count(read(store, t.confs)), 0);
-  const html = make_string(comp_container(new_reel(updated)));
+  const html = renderSchedule(updated);
   assert.ok(html.includes('id="today"'));
   assert.ok(html.includes('Test Conference'));
 });
