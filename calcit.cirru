@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |js-ffi/
-      :type-slots $ {} $ :dispatch-op 'app.schema/DispatchOp
+      :type-slots $ {} $ :dispatch-op 'app.types/Op
   :files $ {}
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -171,7 +171,7 @@
           :examples $ []
           :schema $ quote $ Fn app.types/Conf Bool (-> respo.schema/Element)
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control)
             let
                 store $ :store reel
                 states $ :states store
@@ -194,7 +194,7 @@
                               sort $ fn (a b) (&compare a.:date b.:date)
                             assert-type (Option :none) (Option app.types/Conf)
                       if dev?
-                        Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                        Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control
                         Option :none
                   div
                     {} $ :style $ .merge ui/center
@@ -203,7 +203,9 @@
                         :font-size 80
                     <> |Loading...
           :examples $ []
-          :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store)
+            Fn reel.typed/Control $ -> Unit
+            -> respo.schema/Component
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -386,7 +388,7 @@
             println "|Running mode:" $ if config/dev? |dev |release
             render-app!
             add-watch! *reel :changes $ fn (reel prev) (render-app!)
-            listen-devtools-toggle! |k $ fn () $ dispatch! (reel.typed/Control :toggle)
+            listen-devtools! |k on-control!
             load-json-data!
             println "|App started."
             , &unit
@@ -402,6 +404,10 @@
             if (number? value) value 0
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> Number)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control) (dispatch! control)
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (non-nil? build-errors) (tip! |error build-errors)
@@ -416,14 +422,10 @@
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! mount-target
-              fn () $ comp-container @*reel
+              fn () $ comp-container @*reel on-control!
               fn (op)
-                when
-                  and config/dev? $ not= :states $ .unwrap-or (nth op 0) :unknown
-                  js/console.log |Dispatch: op
-                match (app.types/decode-op op)
-                  (:some resolved) (dispatch! resolved)
-                  (:none) &unit
+                hint-fn $ Fn app.types/Op $ -> Unit
+                dispatch! op
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'schedule-url $ %{} 'CodeEntry (:doc |)
@@ -438,7 +440,7 @@
             app.updater :refer $ updater
             app.schema :as schema
             app.types :refer $ Conf
-            reel.util :refer $ listen-devtools-toggle!
+            reel.util :refer $ listen-devtools!
             app.config :as config
             |bottom-tip :default tip!
             |./calcit.build-errors :default build-errors
@@ -448,13 +450,8 @@
             reel.typed :as typed
             js-ffi.shared :as shared
     'app.schema $ %{} 'FileEntry
-      :defs $ {}
-        'DispatchOp $ %{} 'CodeEntry
-          :doc "|Open Enum alias for Respo dispatch-op. This representative value is not dispatched; conference operations and Reel controls retain their constructors and checked payloads."
-          :code $ quote $ def DispatchOp (:: :unhandled)
-          :examples $ []
-          :schema $ quote AnyEnum
-        'store $ %{} 'CodeEntry (:doc |)
+      :defs $ {} $ 'store
+        %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             app.types/Store :states ({}) :confs $ []
           :examples $ []
@@ -490,34 +487,6 @@
             :confs $ :: 'List Conf
           :examples $ []
           :schema $ quote StructDef
-        'decode-op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn decode-op (op)
-            let
-                some-op $ fn (value)
-                  hint-fn $ Fn app.types/ResolvedOp $ -> (Option app.types/ResolvedOp)
-                  Option :some value
-              match (typed/decode-control op)
-                (:some control) (some-op control)
-                (:none)
-                  match op
-                    (:states cursor data)
-                      if (list? cursor)
-                        some-op $ Op :states
-                          decode-map-as cursor $ List Dynamic
-                          , data
-                        raise "|Expected state cursor list"
-                    (:load-confs data)
-                      if (struct? data)
-                        struct-match data
-                          app.types/ConfBatch batch $ some-op $ Op :load-confs batch
-                          _ other $ raise "|Expected ConfBatch; reload after upgrading the event format"
-                        raise "|Expected ConfBatch; reload after upgrading the event format"
-                    (:hydrate-storage data)
-                      some-op $ Op :hydrate-storage $ read-store data
-                    _ $ do (eprintln "|Unknown op:" op) (Option :none)
-          :examples $ []
-          :schema $ quote $ Fn AnyEnum
-            -> $ Option app.types/ResolvedOp
         'read-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-store (value)
             if (struct? value)
@@ -528,7 +497,6 @@
           :schema $ quote $ Fn Input (-> app.types/Store) (:generics Input)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
-          :require $ reel.typed :as typed
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
