@@ -57,9 +57,9 @@
                     first $ rest confs
                     Option app.types/Conf
                   rest confs
-                  if conf.:far? previous-conf $ Option :some conf
+                  if conf.:far? previous-conf $ Some conf
           :examples $ []
-          :schema $ quote $ Fn (List respo.schema/Component) (List app.types/Conf) (Option app.types/Conf)
+          :schema $ quote $ Fn (List respo.schema/Component) (List Conf) (Option Conf)
             -> $ List respo.schema/ChildPair
         'comp-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-card (conf prev-conf next-conf)
@@ -107,7 +107,7 @@
                           math-ceil $ prev-conf-value.:days
                         days $ date-diff-days date prev-end-date
                       if (> days 0)
-                        Option :some $ div
+                        Some $ div
                           {} $ :style $ .merge ui/row-middle
                             {} (:font-family ui/font-fancy) (:font-size 16) (:font-weight 300) (:padding "|0 8px") (:margin "|8px 20px")
                               :border-left $ str "|4px solid " $ hsl 240 80 86
@@ -115,10 +115,10 @@
                                 + 4 $ * 18 $ sqrt days
                                 , |px
                           <> $ str days "| days"
-                        Option :none
+                        , None
                 if conf.:today? comp-today $ comp-conf-info conf $ or overlap-with-prev? overlap-with-next?
           :examples $ []
-          :schema $ quote $ Fn app.types/Conf (calcit.core/Option app.types/Conf) (calcit.core/Option app.types/Conf) (-> respo.schema/Component)
+          :schema $ quote $ Fn Conf (Option Conf) (Option Conf) (-> respo.schema/Component)
         'comp-conf-info $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn comp-conf-info (conf overlapped?)
             div
@@ -165,7 +165,7 @@
                     :font-size 12
                     :white-space :nowrap
           :examples $ []
-          :schema $ quote $ Fn app.types/Conf Bool (-> respo.schema/Element)
+          :schema $ quote $ Fn Conf Bool (-> respo.schema/Element)
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (reel on-control)
             let
@@ -188,10 +188,10 @@
                                 [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type (Option :none) (Option app.types/Conf)
+                            assert-type None $ Option app.types/Conf
                       if dev?
-                        Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control
-                        Option :none
+                        Some $ comp-typed-reel (>> states :reel) reel ({}) on-control
+                        , None
                   div
                     {} $ :style $ .merge ui/center
                       {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
@@ -241,24 +241,24 @@
                 diff $ .diff a b |days
               diff :days
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost app.comp.container/DateTimeHost (-> Number) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost DateTimeHost (-> Number) (:features :js-ffi)
         'date-plus-days $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-plus-days (d days)
             .plus d $ js-object $ :days days
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost Number (-> app.comp.container/DateTimeHost) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost Number (-> DateTimeHost) (:features :js-ffi)
         'date-to-format $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-to-format (d fmt) (.to-format d fmt)
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost String (-> String) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost String (-> String) (:features :js-ffi)
         'date-to-iso $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-to-iso (d) (.to-iso d)
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> String) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost (-> String) (:features :js-ffi)
         'date-valid? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn date-valid? (d) (d :is-valid)
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> Bool) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost (-> Bool) (:features :js-ffi)
         'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-scroll (schedule) (action el at?)
             when (non-nil? schedule)
@@ -271,7 +271,7 @@
                   (:none) &unit
                 , 300
           :examples $ []
-          :schema $ quote $ Fn (List app.types/Conf) (-> respo.schema/Effect) (:features :js-ffi)
+          :schema $ quote $ Fn (List Conf) (-> respo.schema/Effect) (:features :js-ffi)
         'inline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defmacro inline (path)
             read-file $ str path
@@ -289,11 +289,11 @@
                 date-time $ js-cast dateTimeFactory DateTimeFactoryHost
               .from-iso date-time text
           :examples $ []
-          :schema $ quote $ Fn String (-> app.comp.container/DateTimeHost) (:features :js-ffi)
+          :schema $ quote $ Fn String (-> DateTimeHost) (:features :js-ffi)
         'start-of-day $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn start-of-day (d) (.start-of d |day)
           :examples $ []
-          :schema $ quote $ Fn app.comp.container/DateTimeHost (-> app.comp.container/DateTimeHost) (:features :js-ffi)
+          :schema $ quote $ Fn DateTimeHost (-> DateTimeHost) (:features :js-ffi)
         'today-string $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn today-string ()
             let
@@ -337,7 +337,7 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ quote $ Ref (reel.typed/State app.types/Op app.types/Store)
+          :schema $ quote $ Ref (typed/State app.types/Op app.types/Store)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             reset! *reel $ match op
@@ -399,11 +399,11 @@
           :code $ quote $ defn number-or-zero (value)
             if (number? value) value 0
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Number)
+          :schema $ quote $ Fn Input (-> Number) (:generics Input)
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch! control)
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (non-nil? build-errors) (tip! |error build-errors)
@@ -451,7 +451,7 @@
           :code $ quote $ def store
             app.types/Store :states ({}) :confs $ []
           :examples $ []
-          :schema $ quote app.types/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
           :require $ app.types :refer $ Store
@@ -490,7 +490,7 @@
                 _ other $ raise "|Expected Store"
               decode-map-as value 'Store
           :examples $ []
-          :schema $ quote $ Fn Input (-> app.types/Store) (:generics Input)
+          :schema $ quote $ Fn Input (-> Store) (:generics Input)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.types
     'app.updater $ %{} 'FileEntry
