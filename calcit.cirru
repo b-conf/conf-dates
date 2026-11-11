@@ -51,11 +51,11 @@
               let
                   conf $ assert-type
                     .unwrap $ first confs
-                    , 'app.types/Conf
+                    , Conf
                 recur
                   conj acc $ comp-card conf previous-conf $ assert-type
                     first $ rest confs
-                    Option app.types/Conf
+                    Option Conf
                   rest confs
                   if conf.:far? previous-conf $ Some conf
           :examples $ []
@@ -188,7 +188,7 @@
                                 [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
                                 , schedule
                               sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type None $ Option app.types/Conf
+                            assert-type None $ Option Conf
                       if dev?
                         Some $ comp-typed-reel (>> states :reel) reel ({}) on-control
                         , None
@@ -356,7 +356,7 @@
                     converted $ to-calcit-data json-data
                   if (list? converted)
                     map converted $ fn (m)
-                      hint-fn $ Fn Dynamic (-> app.types/Conf) (:features :js-ffi)
+                      hint-fn $ Fn Dynamic (-> Conf) (:features :js-ffi)
                       if (map? m)
                         app.types/Conf :name
                           contract/expect-string |Conf.name $ .unwrap-or (get m |name) |
