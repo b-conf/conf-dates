@@ -346,7 +346,7 @@
                 typed/record-op updater @*reel action (shared/random-uuid) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.types/ResolvedOp (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn app.types/ResolvedOp (-> Unit) (:features :js-ffi :state)
         'load-json-data! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn load-json-data! () (hint-fn Async)
             let
@@ -354,30 +354,27 @@
                 json-data $ js-await $ .!json resource
                 data $ let
                     converted $ to-calcit-data json-data
-                  if (list? converted)
-                    map converted $ fn (m)
-                      hint-fn $ Fn Dynamic (-> Conf) (:features :js-ffi)
-                      if (map? m)
-                        app.types/Conf :name
-                          contract/expect-string |Conf.name $ .unwrap-or (get m |name) |
-                          , :date
-                            contract/expect-string |Conf.date $ .unwrap-or (get m |date) |
-                            , :days
-                              number-or-zero $ .unwrap-or (get m |days) 0
-                              , :city
-                                contract/expect-string |Conf.city $ .unwrap-or (get m |city) |
-                                , :host
-                                  contract/expect-string |Conf.host $ .unwrap-or (get m |host) |
-                                  , :url
-                                    contract/expect-string |Conf.url $ .unwrap-or (get m |url) |
-                                    , :code
-                                      contract/expect-string |Conf.code $ .unwrap-or (get m |code) |
-                                      , :today? false :far? false
-                        raise "|Expected conference object"
-                    raise "|Expected conference list"
+                  map
+                    decode-map-as converted $ List $ Map String Dynamic
+                    fn (m)
+                      app.types/Conf :name
+                        contract/expect-string |Conf.name $ .unwrap-or (get m |name) |
+                        , :date
+                          contract/expect-string |Conf.date $ .unwrap-or (get m |date) |
+                          , :days
+                            number-or-zero $ .unwrap-or (get m |days) 0
+                            , :city
+                              contract/expect-string |Conf.city $ .unwrap-or (get m |city) |
+                              , :host
+                                contract/expect-string |Conf.host $ .unwrap-or (get m |host) |
+                                , :url
+                                  contract/expect-string |Conf.url $ .unwrap-or (get m |url) |
+                                  , :code
+                                    contract/expect-string |Conf.code $ .unwrap-or (get m |code) |
+                                    , :today? false :far? false
               dispatch! $ app.types/Op :load-confs $ app.types/ConfBatch :items data
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             if config/dev? $ load-console-formatter!
@@ -389,7 +386,7 @@
             println "|App started."
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def mount-target
             .unwrap $ respo-browser/query-selector |.app
@@ -403,7 +400,7 @@
         'on-control! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-control! (control) (dispatch! control)
           :examples $ []
-          :schema $ quote $ Fn typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit) (:features :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (non-nil? build-errors) (tip! |error build-errors)
@@ -414,7 +411,7 @@
                 load-json-data!
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! mount-target
@@ -423,7 +420,7 @@
                 hint-fn $ Fn app.types/Op $ -> Unit
                 dispatch! op
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
