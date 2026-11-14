@@ -202,6 +202,7 @@
           :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store)
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
+            :features :state
         'comp-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def comp-header
             div
@@ -411,7 +412,7 @@
                 load-json-data!
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! mount-target
@@ -420,7 +421,7 @@
                 hint-fn $ Fn app.types/Op $ -> Unit
                 dispatch! op
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'schedule-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def schedule-url (str |//r.tiye.me/b-conf/chinese-tech-conf-schedule/ config/year |.json)
           :examples $ []
