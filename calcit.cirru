@@ -200,7 +200,7 @@
                     <> |Loading...
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store)
-            Fn reel.typed/Control $ -> Unit
+            Fn reel.typed/Control (-> Unit) (:features :state)
             -> respo.schema/Component
             :features :state
         'comp-header $ %{} 'CodeEntry (:doc |)
