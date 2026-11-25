@@ -53,6 +53,7 @@ test('real conference card preserves name, date, host, city and link', () => {
     assert.ok(html.includes(text), `Missing ${text}`);
   }
   assert.ok(html.includes('rel="noopener noreferrer"'));
+  assert.ok(!make_string(comp_conf_info(conf({ name: '' }), false)).includes('??'));
 });
 
 test('first, separated and overlapping cards always retain the actual conference', () => {
