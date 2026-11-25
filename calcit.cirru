@@ -134,8 +134,7 @@
                   {} $ :opacity |0.5
                   {}
               div ({})
-                <>
-                  or (:name conf) |??
+                <> (:name conf)
                   {} $ :font-size 16
                 space-x 16
                 ; <> $ name $ :code conf
