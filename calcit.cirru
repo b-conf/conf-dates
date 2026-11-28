@@ -172,31 +172,24 @@
                 states $ :states store
                 schedule $ :confs store
               [] (effect-scroll schedule)
-                if (non-nil? schedule)
-                  div
-                    {} $ :style $ .merge ui/global
-                    , comp-header
-                      div
-                        {} $ :style $ {} (:padding "|100px 16px 240px")
-                        keyed->
-                          {} $ :style $ {} (:max-width 720) (:margin :auto)
-                          arrange-list
-                            assert-type ([]) (List respo.schema/Component)
-                            ->
-                              concat
-                                [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
-                                , schedule
-                              sort $ fn (a b) (&compare a.:date b.:date)
-                            assert-type None $ Option Conf
-                      if dev?
-                        Some $ comp-typed-reel (>> states :reel) reel ({}) on-control
-                        , None
-                  div
-                    {} $ :style $ .merge ui/center
-                      {} (:height 400) (:font-family ui/font-fancy) (:font-weight 100)
-                        :color $ hsl 0 0 80
-                        :font-size 80
-                    <> |Loading...
+                div
+                  {} $ :style $ .merge ui/global
+                  , comp-header
+                    div
+                      {} $ :style $ {} (:padding "|100px 16px 240px")
+                      keyed->
+                        {} $ :style $ {} (:max-width 720) (:margin :auto)
+                        arrange-list
+                          assert-type ([]) (List respo.schema/Component)
+                          ->
+                            concat
+                              [] $ app.types/Conf :name | :date (today-string) :days 1 :city | :host | :url | :code | :today? true :far? false
+                              , schedule
+                            sort $ fn (a b) (&compare a.:date b.:date)
+                          assert-type None $ Option Conf
+                    if dev?
+                      Some $ comp-typed-reel (>> states :reel) reel ({}) on-control
+                      , None
           :examples $ []
           :schema $ quote $ Fn (reel.typed/State app.types/Op app.types/Store)
             Fn reel.typed/Control (-> Unit) (:features :state)
@@ -261,15 +254,14 @@
           :schema $ quote $ Fn DateTimeHost (-> Bool) (:features :js-ffi)
         'effect-scroll $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-scroll (schedule) (action el at?)
-            when (non-nil? schedule)
-              js/setTimeout
-                fn () $ match (query-selector |#today)
-                  (:some target)
-                    let
-                        scroll-target $ js-cast target ScrollElementHost
-                      .scroll-into-view! scroll-target
-                  (:none) &unit
-                , 300
+            js/setTimeout
+              fn () $ match (query-selector |#today)
+                (:some target)
+                  let
+                      scroll-target $ js-cast target ScrollElementHost
+                    .scroll-into-view! scroll-target
+                (:none) &unit
+              , 300
           :examples $ []
           :schema $ quote $ Fn (List Conf) (-> respo.schema/Effect) (:features :js-ffi)
         'inline $ %{} 'CodeEntry (:doc |)
